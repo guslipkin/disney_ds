@@ -6,6 +6,7 @@ output: html_notebook
 ## Section 1. Introduction
 Introduction
 The introduction should introduce your general research topic and your data (where it came from, how it was collected, what are the cases, what are the variables, etc.).
+Our topic focuses on popular Walt Disney World attractions. In this data, we can explore ride wait times and the affect that certain enviornmental conditions have on the duration of these wait times. We collected this data through 
 
 ## Section 2. Data Analysis Plan
 Explore the affects of weather conditions on wait times for popular Disney World rides.
