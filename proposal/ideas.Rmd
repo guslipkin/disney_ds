@@ -18,6 +18,6 @@ Print out a glimpse of the data frame. In your project repo: place your data in 
 
 
 ```{r}
-Disney_Data <- read_csv("disney_data")
+Disney_Data <- read_csv("https://github.com/guslipkin/disney_ds/blob/master/data/metadata.csv")
 ```
 
