@@ -4,8 +4,20 @@ output: html_notebook
 ---
 
 ## Section 1. Introduction
+Introduction
+The introduction should introduce your general research topic and your data (where it came from, how it was collected, what are the cases, what are the variables, etc.).
 
 ## Section 2. Data Analysis Plan
+Explore the affects of weather conditions on wait times for popular Disney World rides.
+- Does hot weather increase wait times for rides with a "Splash_Aspect"
+- Does an rainy weather cause an increase in wait times for "indoor_rides"?
 
 ## Section 3. Data
+Data Description
+Print out a glimpse of the data frame. In your project repo: place your data in the /data folder, and add the data dictionary and source for the dataset to the README.md file in the /data folder. Make sure the codebook is neatly formatted and easy to read.
+
+
+```{r}
+Disney_Data <- read_csv("disney_data")
+```
 
