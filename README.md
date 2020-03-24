@@ -8,7 +8,7 @@ Team members:
 
 - Student 2 [Hailey Skoglund](mailto:hskoglund7612@floridapoly.edu)
 
-- Student 3 [Marli](mailto:dog@floridapoly.edu)
+- Student 3 [Marli](mailto:hskoglund7612@floridapoly.edu)
 
 
 Our project investigates the main characteristics of popular movies in recent years.
