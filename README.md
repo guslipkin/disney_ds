@@ -4,11 +4,11 @@
 
 Team members: 
 
-- Student 1 [Rei](mailto:rsanchezarias@floridapoly.edu)
+- Student 1 [Gus Lipkin](mailto:glipkin6737@floridapoly.edu)
 
-- Student 2 [Student 2](mailto:student2@floridapoly.edu)
+- Student 2 [Hailey Skoglund](mailto:hskoglund7612@floridapoly.edu)
 
-- Student 3 [Student 3](mailto:student3@floridapoly.edu)
+- Student 3 [Marli](mailto:dog@floridapoly.edu)
 
 
 Our project investigates the main characteristics of popular movies in recent years.
