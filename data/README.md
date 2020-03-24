@@ -1,7 +1,7 @@
 # Data Description: IMDB popular movies data
 
 We use the `IMDB_movies.csv` dataset available at 
-<https://github.com/reisanar/datasets/blob/master/IMDB_movies.csv>
+<https://github.com/andy139/DisneyWorld-Waiting-Times-EDA/tree/master/Datasets>
 
 This dataset includes information of popular movies on IMDB in the last 10 years. 
 
