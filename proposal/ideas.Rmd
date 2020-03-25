@@ -6,23 +6,23 @@ output: html_notebook
 ## Section 1. Introduction
 Introduction
 The introduction should introduce your general research topic and your data (where it came from, how it was collected, what are the cases, what are the variables, etc.).
-Our topic focuses on popular Walt Disney World attractions. In this data, we can explore ride wait times 
+Our topic focuses on popular Walt Disney World attractions. In this data, we explore ride wait times 
 and the affect that certain enviornmental conditions have on the duration of these wait times. We collected 
 this data through researching Walt Disney World's data on wait times and ticket sales. Our data originated 
-from the raw dataset: https://raw.githubusercontent.com/andy139/DisneyWorld-Waiting-Times-EDA/master/Datasets/disney.csv
+from the raw dataset: https://touringplans.com/walt-disney-world/crowd-calendar#DataSetsv
 The cases for this data include___________________
 The variables studied in this data include local schools in session, park capacity, holidays, weather conditions, 
 as well as the opening and closing time of the park.
 
 
 ## Section 2. Data Analysis Plan
-From the given datasets, we decided to create our own dataframe that focuses on data variables including weather, parade times, attraction wait times, spash aspect of ride, and whether the ride is indoor or outdoor.
+From the given datasets, we decided to create our own dataframe that focuses on data variables including weather, parade times, attraction wait times, splash aspect of ride, and whether the ride is indoor or outdoor.
 Explore the affects of weather conditions on wait times for popular Disney World rides.
 - Does hot weather increase wait times for rides with a "Splash_Aspect"
-- Does an rainy weather cause an increase in wait times for "indoor_rides"?
+- Does rainy weather cause an increase in wait times for "indoor_rides"?
 - Determine the busiest Day of week, Day of Month, Day of Year (lubridate data) for tourists to visit WDW
-- Sunset
-- create a structed travel plan for tourists to have the most enyo
+- Sunset time
+- Create a structed travel plan for tourists to minimize the amount of time spent waiting in line
 
 ## Section 3. Data
 Data Description
