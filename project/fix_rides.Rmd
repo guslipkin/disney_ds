@@ -50,19 +50,11 @@ rides <- list("dwarfs_train" = dwarfs_train,
 head(rides[1])
 ```
 
-
-```{r}
-class(rides[[1]]$datetime)
-
-rides[[1]] %>% 
-  mutate(time = (datetime))
-```
-
-
+# Can we make this faster?
 ```{r}
 for (i in 1:14) {
-  rides[[1]] <- rides[[1]] %>%
-    mutate(time = hms(rides[[1]]$datetime))
+  rides[[i]] <- rides[[i]] %>%
+    mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
 }
 
 head(rides[[1]])
@@ -77,5 +69,25 @@ for (i in 1:14) {
 }
 
 head(rides[[1]])
+```
+
+
+```{r}
+for (i in 1:14) {
+  mean <- rides[[i]] %>%
+    summarise(mean = mean(SPOSTMIN, na.rm=T)) %>%
+    round(digits = 2)
+  print(paste("The average wait time for ", names(rides[i]), " is ", mean, sep = ""))
+}
+```
+
+
+```{r}
+for (i in 1:14) {
+  mean <- rides[[i]] %>%
+    summarise(mean = mean(SACTMIN, na.rm=T)) %>%
+    round(digits = 2)
+  print(paste("The real average wait time for ", names(rides[i]), " is ", mean, sep = ""))
+}
 ```
 
