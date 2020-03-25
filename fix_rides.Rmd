@@ -1,0 +1,50 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Load libraries
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+dwarfs_train <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/7_dwarfs_train.csv")
+alien_saucers <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/alien_saucers.csv")
+dinosaur <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/dinosaur.csv")
+expedition_everest <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/expedition_everest.csv")
+flight_of_passage <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/flight_of_passage.csv")
+kilimanjaro_safaris <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/kilimanjaro_safaris.csv")
+navi_river <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/navi_river.csv")
+pirates_of_caribbean <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/pirates_of_caribbean.csv")
+rock_n_rollercoaster <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/rock_n_rollercoaster.csv")
+slinky_dog <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/slinky_dog.csv")
+soarin <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/soarin.csv")
+spaceship_earth <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/spaceship_earth.csv")
+splash_mountain <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/splash_mountain.csv")
+toy_story_mania <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/toy_story_mania.csv")
+
+head(dwarfs_train)
+```
+
+
+```{r}
+rides <- list("dwarfs_train" = dwarfs_train, 
+              "alien_saucers" = alien_saucers,
+              "dinosaur" = dinosaur,
+              "expedition_everest" = expedition_everest,
+              "flight_of_passage" = flight_of_passage,
+              "kilimanjaro_safaris" = kilimanjaro_safaris,
+              "navi_river" = navi_river,
+              "pirates_of_caribbean" = pirates_of_caribbean,
+              "rock_n_rollercoaster" = rock_n_rollercoaster,
+              "slinky_dog" = slinky_dog,
+              "soarin" = soarin,
+              "spaceship_earth" = spaceship_earth,
+              "splash_mountain" = splash_mountain,
+              "toy_story_mania" = toy_story_mania)
+
+head(rides[1])
+```
+
