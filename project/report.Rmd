@@ -2,10 +2,19 @@
 title: "Final Report for Intro to Data Science"
 output: html_notebook
 ---
+##Write-up
 
-This is where the final project report write-up goes. 
+###Introduction
+providing the description of your dataset and research questions in the introduction
+####Dataset Description:
+Our chosen dataset focuses on the affect that enviornmental conditions has on Walt Disney World attraction wait times. We explore this relationship by revealing trends in the coorelation between weather conditins such as temperature and precipitation levels with standby wait times.
 
 
-Before you submit, make sure everything runs as expected.
+###revised results from the proposal and data analysis
+The majority of the write up will be the revised results from the proposal and data analysis. 
+rite up the results of the data analysis, incorporating any feedback you received from your instructor during the first stages of the project. Remember to pay attention to your presentation. Neatness, coherency, and clarity will count.
 
-You can add sections as you see fit. Make sure you have a section called "Introduction" at the beginning and a section called "Conclusion" at the end. The rest is up to you!
+###Conclusion
+Your write up must also include a one to two page conclusion
+####Discussion
+This will require a summary of what you have learned about your research question. Provide suggestions for improving your analysis, and include a paragraph on what you would do differently if you were able to start over with the project or what you would do next if you were going to continue work on the project.
