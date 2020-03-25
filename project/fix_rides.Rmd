@@ -6,6 +6,8 @@ output: html_notebook
 Load libraries
 ```{r}
 library(tidyverse)
+library(lubridate)
+library(hms)
 ```
 
 
@@ -46,5 +48,34 @@ rides <- list("dwarfs_train" = dwarfs_train,
               "toy_story_mania" = toy_story_mania)
 
 head(rides[1])
+```
+
+
+```{r}
+class(rides[[1]]$datetime)
+
+rides[[1]] %>% 
+  mutate(time = (datetime))
+```
+
+
+```{r}
+for (i in 1:14) {
+  rides[[1]] <- rides[[1]] %>%
+    mutate(time = hms(rides[[1]]$datetime))
+}
+
+head(rides[[1]])
+```
+
+
+Remove rows with -999 as the estimated wait time
+```{r}
+for (i in 1:14) {
+  rides[[i]] <- rides[[i]] %>%
+     filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
+}
+
+head(rides[[1]])
 ```
 
