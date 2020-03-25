@@ -9,7 +9,7 @@ library(tidyverse)
 ```
 
 ```{r}
-metadata <- read_csv("/Volumes/eDrive/COP2073/disney_ds/data/metadata.csv")
+metadata <- read_csv("../data/metadata.csv")
 head(metadata)
 ```
 
