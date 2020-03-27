@@ -55,6 +55,8 @@ head(rides[1])
 for (i in 1:14) {
   rides[[i]] <- rides[[i]] %>%
     mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
+  rides[[i]] <- rides[[i]] %>%
+    mutate(ride_name = names(rides[i]))
 }
 
 head(rides[[1]])
@@ -71,23 +73,11 @@ for (i in 1:14) {
 head(rides[[1]])
 ```
 
-
+Makes a stupid big dataframe with all the rides
 ```{r}
-for (i in 1:14) {
-  mean <- rides[[i]] %>%
-    summarise(mean = mean(SPOSTMIN, na.rm=T)) %>%
-    round(digits = 2)
-  print(paste("The average wait time for ", names(rides[i]), " is ", mean, sep = ""))
+rides_df <- rides[[1]]
+for (i in 2:14) {
+  rides_df <- rbind(rides_df, rides[[i]])
 }
+rides_df
 ```
-
-
-```{r}
-for (i in 1:14) {
-  mean <- rides[[i]] %>%
-    summarise(mean = mean(SACTMIN, na.rm=T)) %>%
-    round(digits = 2)
-  print(paste("The real average wait time for ", names(rides[i]), " is ", mean, sep = ""))
-}
-```
-

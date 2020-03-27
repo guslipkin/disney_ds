@@ -1,0 +1,38 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(reshape2)
+```
+
+
+```{r}
+for (i in 1:14) {
+  mean <- rides[[i]] %>%
+    summarise(mean = mean(SPOSTMIN, na.rm=T)) %>%
+    round(digits = 2)
+  print(paste("The average wait time for ", names(rides[i]), " is ", mean, sep = ""))
+}
+```
+
+
+```{r}
+for (i in 1:14) {
+  mean <- rides[[i]] %>%
+    summarise(mean = mean(SACTMIN, na.rm=T)) %>%
+    round(digits = 2)
+  print(paste("The real average wait time for ", names(rides[i]), " is ", mean, sep = ""))
+}
+```
+
+
+```{r}
+rides_df %>% ggplot(aes(x = ride_name, y = SPOSTMIN)) +
+  geom_boxplot(na.rm = TRUE, outlier.shape = NA, size = 1) + 
+  coord_cartesian(ylim = c(0,275)) +
+  theme(axis.text.x = element_text(angle = -45, hjust = 0))
+```
+
