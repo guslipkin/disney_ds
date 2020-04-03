@@ -1,11 +1,16 @@
 ---
-title: "R Notebook"
+title: "est_time_box_plot.rmd"
 output: html_notebook
 ---
 
 ```{r}
 library(tidyverse)
 library(reshape2)
+library(lubridate)
+```
+
+```{r}
+head(rides_df)
 ```
 
 
@@ -30,24 +35,33 @@ for (i in 1:14) {
 
 
 ```{r}
-rides_df %>% ggplot(aes(x = ride_name, y = SPOSTMIN)) +
-  geom_boxplot(na.rm = TRUE, outlier.shape = NA, size = 1) + 
-  coord_cartesian(ylim = c(0,275)) +
-  theme(axis.text.x = element_text(angle = -45, hjust = 0))
+rides_df %>% ggplot(aes(x = SPOSTMIN, y = ride_name)) +
+  geom_boxplot(na.rm = TRUE, outlier.shape = "circle", outlier.alpha = .1, size = 1) + 
+  coord_cartesian(xlim = c(0,275)) +
+  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1)
 ```
 
-# Rides that have a splash aspect:
 
-# Rides that are indoor:
-
-# Compare Wait times for indoor and Splash Apect rides with Temp and percipitation levels
+```{r}
+rides_df %>% ggplot(aes(x = SACTMIN, y = ride_name)) +
+  geom_boxplot(na.rm = TRUE, outlier.shape = "circle", outlier.alpha = .1, size = 1) +
+  coord_cartesian(xlim = c(0, 200)) +
+  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1)
+```
+# Compare Wait times for indoor and Splash Apect rides with Temp and precipitation levels
 
 # Wait times for parades -- 
 
-# Largest average wait times = busiest day of week -- Histagram of wait times highlight parade times
-
-
-
-# 
+# Largest average wait times = busiest day of week -- Histogram of wait times highlight parade times
+```{r}
+for (i in 1:14) {
+  rides[[i]] %>%
+    mutate(weekday = weekdays(datetime)) %>%
+    group_by(weekday) %>%
+    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+    ggplot(aes(x = weekday, y = mean_wait)) +
+    geom_col()
+}
+```
 
 
