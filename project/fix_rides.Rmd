@@ -1,5 +1,5 @@
 ---
-title: "R Notebook"
+title: "fix_rides.rmd"
 output: html_notebook
 ---
 
@@ -73,6 +73,33 @@ for (i in 1:14) {
 head(rides[[1]])
 ```
 
+
+# Rides that have a splash aspect:
+```{r}
+splash <- c("pirates_of_caribbean", "splash_mountain", "flight_of_passage")
+indoor <- c("dinosaur", "flight_of_passage", "navi_river", "pirates_of_caribbean", 
+            "rock_n_rollercoaster", "soarin", "spaceship_earth", "toy_story_mania")
+for (i in 1:14) {
+  if (names(rides[i]) %in% splash) {
+    rides[[i]] <- rides[[i]] %>%
+    mutate(splash = TRUE)
+  } else {
+    rides[[i]] <- rides[[i]] %>%
+    mutate(splash = FALSE)
+  }
+  if (names(rides[i]) %in% indoor) {
+    rides[[i]] <- rides[[i]] %>%
+    mutate(indoor = TRUE)
+  } else {
+    rides[[i]] <- rides[[i]] %>%
+    mutate(indoor = FALSE)
+  }
+}
+
+head(rides[[13]])
+```
+
+
 Makes a stupid big dataframe with all the rides
 ```{r}
 rides_df <- rides[[1]]
@@ -81,3 +108,4 @@ for (i in 2:14) {
 }
 rides_df
 ```
+
