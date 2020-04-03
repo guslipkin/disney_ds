@@ -36,3 +36,18 @@ rides_df %>% ggplot(aes(x = ride_name, y = SPOSTMIN)) +
   theme(axis.text.x = element_text(angle = -45, hjust = 0))
 ```
 
+# Rides that have a splash aspect:
+
+# Rides that are indoor:
+
+# Compare Wait times for indoor and Splash Apect rides with Temp and percipitation levels
+
+# Wait times for parades -- 
+
+# Largest average wait times = busiest day of week -- Histagram of wait times highlight parade times
+
+
+
+# 
+
+
