@@ -20,7 +20,7 @@ attraction wait times, splash aspect of ride, and whether the ride and its line 
 We aim to explore the affects of weather conditions on wait times for popular Disney World rides.
 
 - Does hot weather increase wait times for rides with a "Splash_Aspect"?
-- Does rainy weather cause an increase in wait times for "indoor rides"?
+- Does rainy or hot weather cause an increase in wait times for "indoor rides"?
 - Determine the busiest Day of week, Month, and Year (lubridate data) for tourists to visit WDW
 - Fireworks and parade times as well as sunset times
 - Create a structed travel plan for tourists to minimize the amount of time spent waiting in line
