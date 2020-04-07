@@ -45,7 +45,9 @@ rides_df %>% ggplot(aes(x = SPOSTMIN, y = ride_name)) +
 
 
 ```{r}
-rides_df %>% ggplot(aes(x = SACTMIN, y = ride_name)) +
+rides_df %>% group_by(ride_name) %>%
+  filter(datetime > as.POSIXct("2018-06-30")) %>%
+  ggplot(aes(x = SACTMIN, y = ride_name)) +
   geom_boxplot(na.rm = TRUE, outlier.shape = "circle", outlier.alpha = .1, size = 1) +
   coord_cartesian(xlim = c(0, 200)) +
   geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1)
@@ -87,3 +89,4 @@ rides_df %>%
   ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = ride_name), color = as.factor(ride_name)) +
   geom_col()
 ```
+
