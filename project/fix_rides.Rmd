@@ -131,8 +131,3 @@ for (i in 2:14) {
 rides_df
 ```
 
-```{r}
-rides[[1]] %>%
-  filter(date %in% ak_hot_days$DATE)
-```
-
