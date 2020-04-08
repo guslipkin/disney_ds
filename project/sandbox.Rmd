@@ -42,12 +42,14 @@ cool_days <- wdw_metadata %>%
 xcool_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
   filter(WDWMEANTEMP < 62.8)
+
+xcool_days
 ```
+
 
 ```{r}
 rides_df %>%
-  #filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
-  filter(ymd(as_date(datetime)) %in% ymd(as_date(xhot_days$DATE))) %>%
+  filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
   group_by(ride_name) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
 ```
