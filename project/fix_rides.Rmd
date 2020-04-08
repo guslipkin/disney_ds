@@ -102,6 +102,7 @@ head(rides[[13]])
 }
 ```
 
+
 ```{r}
 ride_name <- c("dwarfs_train", "alien_saucers", "dinosaur", "expedition_everest", "flight_of_passage", 
                "kilimanjaro_safaris", "navi_river", "pirates_of_caribbean", "rock_n_rollercoaster", "slinky_dog", 
