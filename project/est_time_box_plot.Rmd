@@ -67,6 +67,7 @@ for (i in 1:14) {
     summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
     ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait)) +
     geom_col() +
+    coord_cartesian(ylim = c(0, 150)) +
     labs(title = names(rides[i]))
   print(chart)
 }
