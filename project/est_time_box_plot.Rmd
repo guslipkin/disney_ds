@@ -128,7 +128,9 @@ rides_df %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = day, fill = mean_wait)) +
-  geom_tile(colour = "white") +
+  geom_tile(color = "grey") +
   facet_grid(~month) +
-  scale_fill_gradient(low="green", high="red")
+  scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
+  labs(fill = "Wait Time", title = "Mean wait time by day for all rides")
 ```
+
