@@ -14,8 +14,7 @@ metadata <- read_csv("../data/metadata.csv")
 metadata
 ```
 
-```{r}
-if (FALSE) {
+```{r, eval=FALSE}
 mk_metadata <- metadata %>%
   select(DATE, SEASON, HOLIDAYPX, HOLIDAYN, WDWMAXTEMP, WDWMINTEMP, WDWMEANTEMP, HOLIDAYJ, MKOPEN, MKCLOSE, MKEMHOPEN, MKEMHCLOSE, WEATHER_WDWPRECIP,
          MKPRDDT1, MKPRDDT2, MKPRDNT1, MKPRDNT2, MKFIRET1, MKFIRET2)
@@ -28,7 +27,6 @@ hs_metadata <- metadata %>%
 ak_metadata <- metadata %>%
   select(DATE, SEASON, HOLIDAYPX, HOLIDAYN, WDWMAXTEMP, WDWMINTEMP, WDWMEANTEMP, HOLIDAYJ, AKOPEN, AKCLOSE, AKEMHOPEN, AKEMHCLOSE, WEATHER_WDWPRECIP,
          AKPRDDT1, AKPRDDT2, AKSHWNT1, AKSHWNT2)
-}
 ```
 
 
