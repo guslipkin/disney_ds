@@ -120,3 +120,15 @@ rides_df %>%
   geom_col(aes(x = park, y = mean_wait, fill = ride_name))
 ```
 
+
+```{r}
+rides_df %>%
+  mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
+  ggplot(aes(x = monthweek, y = day, fill = mean_wait)) +
+  geom_tile(colour = "white") +
+  facet_grid(~month) +
+  scale_fill_gradient(low="green", high="red")
+```
