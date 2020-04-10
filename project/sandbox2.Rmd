@@ -1,0 +1,41 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+diamonds %>%
+  ggplot() + 
+  geom_point(aes(x = carat, y = price, color = clarity)) +
+  facet_wrap(~ color)
+```
+
+
+```{r}
+  chart <- rides[[i]] %>%
+    mutate(weekday = weekdays(datetime)) %>%
+    group_by(weekday) %>%
+    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+    ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait)) +
+    geom_col() +
+    coord_cartesian(ylim = c(0, 150)) +
+    labs(title = names(rides[i]))
+```
+
+
+```{r}
+rides_df %>%
+  mutate(weekday = weekdays(datetime)) %>%
+  group_by(weekday, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait)) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_wrap(~ ride_name)
+```
+
