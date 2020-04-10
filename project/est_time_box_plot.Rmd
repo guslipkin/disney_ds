@@ -103,7 +103,7 @@ rides_df %>%
   group_by(weekday, park) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
   ggplot() +
-  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = park))
+  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = park), position = "fill")
 ```
 
 > Ask Dr Sanchez about improving this. Different parks have different amounts of rides
