@@ -56,7 +56,7 @@ for (i in 1:14) {
   rides[[i]] <- rides[[i]] %>%
     mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
   rides[[i]] <- rides[[i]] %>%
-    mutate(ride_name = names(rides[i]))
+    mutate(ride_name = as.factor(names(rides[i])))
 }
 
 head(rides[[1]])
