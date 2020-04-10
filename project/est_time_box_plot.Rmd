@@ -93,17 +93,30 @@ rides_df %>%
   mutate(weekday = weekdays(datetime)) %>%
   group_by(weekday, ride_name) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-  ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = ride_name), color = as.factor(ride_name)) +
+  ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = ride_name)) +
   geom_col()
 ```
 
 
 ```{r}
 rides_df %>%
+  inner_join(ride_metadata) %>%
   mutate(weekday = weekdays(datetime)) %>%
-  group_by(weekday, ride_name) %>%
+  group_by(weekday, park) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-  ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = ride_name), color = as.factor(ride_name)) +
-  geom_col()
+  ggplot() +
+  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = park))
+```
+
+> Ask Dr Sanchez about improving this. Different parks have different amounts of rides
+
+```{r}
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  mutate(weekday = weekdays(datetime)) %>%
+  group_by(ride_name, park) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = park, y = mean_wait, fill = ride_name))
 ```
 
