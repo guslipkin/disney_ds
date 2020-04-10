@@ -51,7 +51,7 @@ head(rides[1])
 ```
 
 # Can we make this faster?
-```{r}
+```{r, eval=FALSE}
 for (i in 1:14) {
   rides[[i]] <- rides[[i]] %>%
     mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
@@ -64,7 +64,7 @@ head(rides[[1]])
 
 
 Remove rows with -999 as the estimated wait time
-```{r}
+```{r, eval=FALSE}
 for (i in 1:14) {
   rides[[i]] <- rides[[i]] %>%
      filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
@@ -73,11 +73,21 @@ for (i in 1:14) {
 head(rides[[1]])
 ```
 
+```{r}
+for (i in 1:14) {
+    rides[[i]] <- rides[[i]] %>%
+    mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
+  rides[[i]] <- rides[[i]] %>%
+    mutate(ride_name = as.factor(names(rides[i])))
+    rides[[i]] <- rides[[i]] %>%
+     filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
+}
+```
+
 
 # Rides that have a splash aspect:
-```{r}
+```{r, eval=FALSE}
 #This code has been replaced by the next chunk
-if (FALSE) {
 splash <- c("pirates_of_caribbean", "splash_mountain", "flight_of_passage")
 indoor <- c("dinosaur", "flight_of_passage", "navi_river", "pirates_of_caribbean", 
             "rock_n_rollercoaster", "soarin", "spaceship_earth", "toy_story_mania")
@@ -99,7 +109,6 @@ for (i in 1:14) {
 }
 
 head(rides[[13]])
-}
 ```
 
 
