@@ -6,6 +6,7 @@ output: html_notebook
 ```{r}
 library(tidyverse)
 library(lubridate)
+library(forcats)
 ```
 
 The goal is to compare data between multiple dataframes so that only relevant data is used
@@ -16,55 +17,4 @@ There is a metadata dataframe that has relevant data for each of the four parks
 
 We want to create a new dataframe that has each ride as the row, the park its in, the ride opening data, if it has a splash aspect, and if it is indoors
 
-```{r}
-wdw_metadata %>%
-  summarise(mean(WDWMEANTEMP, na.rm = T), mean(WDWMINTEMP, na.rm = T), mean(WDWMAXTEMP, na.rm = T))
-```
-
-
-```{r}
-xhot_days <- wdw_metadata %>%
-  select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 85)
-
-hot_days <- wdw_metadata %>%
-  select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 79.8 & WDWMEANTEMP < 85)
-
-normal_days <- wdw_metadata %>%
-  select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 71.3 & WDWMEANTEMP < 79.8)
-
-cool_days <- wdw_metadata %>%
-  select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 62.8 & WDWMEANTEMP < 71.3)
-
-xcool_days <- wdw_metadata %>%
-  select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP < 62.8)
-
-xcool_days
-```
-
-
-```{r}
-rides_df %>%
-  filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
-  group_by(ride_name) %>%
-  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
-```
-
-
-```{r}
-temp_list <- list(xhot_days, hot_days, normal_days, cool_days, xcool_days)
-
-for (i in 1:5) {
-  temps <- rides_df %>%
-    #filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
-    filter(ymd(as_date(datetime)) %in% ymd(as_date(temp_list[[i]]$DATE))) %>%
-    group_by(ride_name) %>%
-    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
-  print(temps)
-}
-```
 
