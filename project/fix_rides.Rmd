@@ -12,6 +12,14 @@ library(hms)
 
 
 ```{r}
+park_colors <- c("darkgreen", "cornflowerblue", "chocolate1", "blueviolet")
+temp_colors <- c("red", "orange", "yellow", "blue", "cyan")
+
+temp_list_names <- c("xhot_days", "hot_days", "normal_days", "cool_days", "xcool_days")
+```
+
+
+```{r}
 dwarfs_train <- read_csv("../data/7_dwarfs_train.csv")
 alien_saucers <- read_csv("../data/alien_saucers.csv")
 dinosaur <- read_csv("../data/dinosaur.csv")
@@ -73,14 +81,15 @@ for (i in 1:14) {
 head(rides[[1]])
 ```
 
+
 ```{r}
 for (i in 1:14) {
-    rides[[i]] <- rides[[i]] %>%
-    mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
+  rides[[i]] <- rides[[i]] %>%
+      mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
   rides[[i]] <- rides[[i]] %>%
     mutate(ride_name = as.factor(names(rides[i])))
     rides[[i]] <- rides[[i]] %>%
-     filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
+    filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
 }
 ```
 
@@ -144,3 +153,25 @@ for (i in 2:14) {
 rides_df
 ```
 
+
+```{r}
+temp_list <- list(xhot_days, hot_days, normal_days, cool_days, xcool_days)
+
+temps_df <- rides_df %>%
+    #filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
+    filter(ymd(as_date(datetime)) %in% ymd(as_date(temp_list[[1]]$DATE))) %>%
+    mutate(temp_cat = temp_list_names[1]) %>%
+    group_by(ride_name, temp_cat) %>%
+    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
+
+for (i in 2:5) {
+  df <- rides_df %>%
+    #filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
+    filter(ymd(as_date(datetime)) %in% ymd(as_date(temp_list[[i]]$DATE))) %>%
+    mutate(temp_cat = temp_list_names[i]) %>%
+    group_by(ride_name, temp_cat) %>%
+    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
+  temps_df <- rbind(temps_df, df)
+}
+temps_df
+```
