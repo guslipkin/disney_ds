@@ -52,3 +52,33 @@ head(wdw_metadata)
 head(mk_metadata)
 ```
 
+
+```{r}
+wdw_metadata %>%
+  summarise(mean(WDWMEANTEMP, na.rm = T), mean(WDWMINTEMP, na.rm = T), mean(WDWMAXTEMP, na.rm = T))
+```
+
+
+```{r}
+xhot_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 85)
+
+hot_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 79.8 & WDWMEANTEMP < 85)
+
+normal_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 71.3 & WDWMEANTEMP < 79.8)
+
+cool_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 62.8 & WDWMEANTEMP < 71.3)
+
+xcool_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP < 62.8)
+
+xcool_days
+```
