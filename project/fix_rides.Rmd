@@ -16,6 +16,7 @@ park_colors <- c("darkgreen", "cornflowerblue", "chocolate1", "blueviolet")
 temp_colors <- c("red", "orange", "yellow", "blue", "cyan")
 
 temp_list_names <- c("xhot_days", "hot_days", "normal_days", "cool_days", "xcool_days")
+days_of_week <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 ```
 
 
