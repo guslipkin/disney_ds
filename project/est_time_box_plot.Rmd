@@ -8,8 +8,6 @@ library(tidyverse)
 library(reshape2)
 library(lubridate)
 library(forcats)
-
-days_of_week <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 ```
 
 ```{r}
@@ -134,31 +132,8 @@ rides_df %>%
   ggplot(aes(x = monthweek, y = day, fill = mean_wait)) +
   geom_tile(color = "grey") +
   facet_grid(~month) +
-  scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
+  #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
+  scale_fill_distiller(palette = "Spectral") +
   labs(fill = "Wait (min)", title = "Mean wait time by day for all rides", x = "Week of the month", y = "")
 ```
 
-```{r}
-wdw_metadata %>%
-  mutate(year = year(as.POSIXct(ymd(DATE) + 1)), month = month(as.POSIXct(ymd(DATE) + 1)), day = weekdays(as.POSIXct(ymd(DATE) + 1)),
-         monthweek = ceiling(day(ymd(DATE)) / 7)) %>%
-  group_by(month, day, monthweek) %>%
-  summarise(mean_rain = mean(WEATHER_WDWPRECIP, na.rm = TRUE)) %>% 
-  ggplot(aes(x = monthweek, y = day, fill = mean_rain)) +
-  geom_tile(color = "grey") +
-  facet_grid(~month) +
-  scale_fill_gradient2(low = "cyan", mid = "deepskyblue4", high = "navy", midpoint = .2) +
-  labs(fill = "Rain (in)", title = "Mean historical rainfall by day", x = "Week of the month", y = "")
-```
-
-
-```{r}
-temps_df %>%
-  group_by(ride_name) %>%
-  ggplot() +
-  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
-  scale_fill_manual(values = temp_colors) +
-  coord_flip() +
-  labs(fill = "Temp cat") +
-  theme(legend.justification=c(1,1), legend.position=c(1,1))
-```
