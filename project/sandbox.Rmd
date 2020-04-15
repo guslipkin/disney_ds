@@ -17,4 +17,3 @@ There is a metadata dataframe that has relevant data for each of the four parks
 
 We want to create a new dataframe that has each ride as the row, the park its in, the ride opening data, if it has a splash aspect, and if it is indoors
 
-
