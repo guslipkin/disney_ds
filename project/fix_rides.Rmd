@@ -94,7 +94,6 @@ for (i in 1:14) {
 }
 ```
 
-
 # Rides that have a splash aspect:
 ```{r, eval=FALSE}
 #This code has been replaced by the next chunk
@@ -160,7 +159,7 @@ temp_list <- list(xhot_days, hot_days, normal_days, cool_days, xcool_days)
 
 temps_df <- rides_df %>%
     #filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
-    filter(ymd(as_date(datetime)) %in% ymd(as_date(temp_list[[1]]$DATE))) %>%
+    filter(mdy(as_date(datetime)) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
     mutate(temp_cat = temp_list_names[1]) %>%
     group_by(ride_name, temp_cat) %>%
     summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
@@ -168,7 +167,7 @@ temps_df <- rides_df %>%
 for (i in 2:5) {
   df <- rides_df %>%
     #filter(ymd(as_date(datetime)) %in% ymd(as_date(open_date))) %>%
-    filter(ymd(as_date(datetime)) %in% ymd(as_date(temp_list[[i]]$DATE))) %>%
+    filter(mdy(as_date(datetime)) %in% mdy(as_date(temp_list[[i]]$DATE))) %>%
     mutate(temp_cat = temp_list_names[i]) %>%
     group_by(ride_name, temp_cat) %>%
     summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
