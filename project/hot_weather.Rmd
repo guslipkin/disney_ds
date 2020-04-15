@@ -1,0 +1,66 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(reshape2)
+library(lubridate)
+library(forcats)
+```
+
+
+```{r}
+temps_df %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1))
+```
+
+
+```{r}
+temps_df %>%
+  inner_join(ride_metadata) %>%
+  filter(splash == TRUE) %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1))
+```
+
+
+```{r}
+temps_df %>%
+  inner_join(ride_metadata) %>%
+  filter(indoor == TRUE) %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1))
+```
+
+
+```{r}
+temps_df %>%
+  inner_join(ride_metadata) %>%
+  filter(splash == TRUE & indoor == TRUE) %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1))
+```
+
