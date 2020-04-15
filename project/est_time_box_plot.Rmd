@@ -53,9 +53,23 @@ rides_df %>% group_by(ride_name) %>%
   coord_cartesian(xlim = c(0, 200)) +
   geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1)
 ```
-# Compare Wait times for indoor and Splash Apect rides with Temp and precipitation levels
 
-# Wait times for parades -- 
+
+```{r}
+park_averages <- rides_df %>%
+  inner_join(ride_metadata) %>%
+  group_by(park) %>%
+  summarise(park_averages = mean(SPOSTMIN, na.rm = TRUE))
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  mutate(weekday = weekdays(datetime)) %>%
+  group_by(ride_name, park) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = park, y = mean_wait, fill = ride_name), position = "dodge") 
+  #+geom_hline(yintercept = park_averages$park_averages, color = park_colors)
+```
+
 
 # Largest average wait times = busiest day of week -- Histogram of wait times highlight parade times
 ```{r, eval=FALSE}
@@ -105,21 +119,19 @@ rides_df %>%
   geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = park), position = "fill")
 ```
 
-> Ask Dr Sanchez about improving this. Different parks have different amounts of rides
 
 ```{r}
-park_averages <- rides_df %>%
-  inner_join(ride_metadata) %>%
-  group_by(park) %>%
-  summarise(park_averages = mean(SPOSTMIN, na.rm = TRUE))
 rides_df %>%
-  inner_join(ride_metadata) %>%
-  mutate(weekday = weekdays(datetime)) %>%
-  group_by(ride_name, park) %>%
-  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-  ggplot() +
-  geom_col(aes(x = park, y = mean_wait, fill = ride_name), position = "dodge") 
-  #+geom_hline(yintercept = park_averages$park_averages, color = park_colors)
+  mutate(month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
+  ggplot(aes(x = month, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
+  geom_tile(color = "grey") +
+  facet_grid(~monthweek) +
+  #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by day of the month for all rides", x = "No idea, tbh", y = "")
 ```
 
 
@@ -129,11 +141,26 @@ rides_df %>%
          monthweek = ceiling(day(mdy(date)) / 7)) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
-  ggplot(aes(x = monthweek, y = day, fill = mean_wait)) +
+  ggplot(aes(x = monthweek, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
   geom_tile(color = "grey") +
   facet_grid(~month) +
   #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
   scale_fill_distiller(palette = "Spectral") +
-  labs(fill = "Wait (min)", title = "Mean wait time by day for all rides", x = "Week of the month", y = "")
+  labs(fill = "Wait (min)", title = "Mean wait time by day of the year for all rides", x = "Week of the month", y = "")
+```
+
+
+```{r}
+rides_df %>%
+  mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = wday(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
+  ggplot(aes(x = monthweek, y = ordered(day, levels = days_of_week), fill = mean_wait)) +
+  geom_tile(color = "grey") +
+  facet_grid(~month) +
+  #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by week of the year for all rides", x = "Week of the month", y = "")
 ```
 
