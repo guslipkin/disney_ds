@@ -7,6 +7,8 @@ output: html_notebook
 library(tidyverse)
 library(lubridate)
 library(forcats)
+library(plyr)
+library(plotly)
 ```
 
 The goal is to compare data between multiple dataframes so that only relevant data is used
@@ -16,4 +18,64 @@ Each ride has its own dataframe and is also part of a larger dataframe containin
 There is a metadata dataframe that has relevant data for each of the four parks
 
 We want to create a new dataframe that has each ride as the row, the park its in, the ride opening data, if it has a splash aspect, and if it is indoors
+
+```{r}
+rides_df %>%
+  mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date) + 1) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
+  ggplot(aes(x = monthweek, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
+  geom_tile(color = "grey") +
+  facet_grid(~month) +
+  #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by day of the year for all rides", x = "Week of the month", y = "")
+```
+
+```{r, eval = FALSE}
+rides_test <- rides_df
+
+rides_test$weekday <- as.POSIXlt(mdy(rides_test$date))$wday
+
+rides_test$weekdayf <- factor(rides_test$weekday,levels=rev(1:7),labels=rev(c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")),ordered=TRUE)
+
+rides_test$monthf<-factor(month(mdy(rides_test$date)),levels=as.character(1:12),labels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),ordered=TRUE)
+
+rides_test$yearmonth<- factor(as.yearmon(mdy(rides_test$date)))
+
+rides_test$week <- as.numeric(format(mdy(rides_test$date),"%W"))
+
+rides_test <- ddply(rides_test,.(yearmonth), transform, monthweek = 1 + week -min(week))
+
+ggplot(rides_test, aes(monthweek, weekdayf, fill = SPOSTMIN)) + 
+  geom_tile(colour = "white") + 
+  facet_grid(~monthf) + 
+  scale_fill_distiller(palette = "Spectral") + 
+  xlab("Week of Month") + 
+  ylab("") + 
+  ggtitle("Time-Series Calendar Heatmap: AMZN Stock Prices") + 
+  labs(fill = "Price") 
+```
+
+```{r, eval = FALSE}
+rides_test <- rides_df
+rides_test %>%
+  mutate(
+    weekday = as.POSIXlt(mdy(rides_test$date))$wday) %>%
+  mutate(
+    monthf = factor(month(mdy(rides_test$date)),levels=as.character(1:12),labels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),ordered=TRUE),
+    yearmonth = factor(as.yearmon(mdy(rides_test$date))),
+    week = as.numeric(format(mdy(rides_test$date),"%W"))
+  ) %>%
+  ddply(.(yearmonth), transform, monthweek = 1 + week - min(week)) %>%
+ggplot(aes(monthweek, factor(rides_test$weekday,levels=rev(1:7),labels=rev(c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")),ordered=TRUE), fill = SPOSTMIN)) + 
+  geom_tile(colour = "white") + 
+  facet_grid(year(mdy(rides_test$date))~monthf) + 
+  scale_fill_gradient(low="red", high="green") + 
+  xlab("Week of Month") + 
+  ylab("") + 
+  ggtitle("Time-Series Calendar Heatmap: AMZN Stock Prices") + 
+  labs(fill = "Price") 
+```
 
