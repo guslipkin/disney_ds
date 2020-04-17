@@ -10,3 +10,70 @@ library(lubridate)
 library(forcats)
 ```
 
+```{r}
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "mk") %>%
+  inner_join(mk_metadata, by = c("date" = "DATE")) %>%
+  #filter(MKPRDDT1 == format(as.POSIXct(hms("15:00:00")), "%H:%M:%S")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > MKOPEN) %>%
+  group_by(time, ride_name)
+```
+
+
+```{r}
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "ak") %>%
+  inner_join(ak_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > AKOPEN) %>%
+  group_by(time, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name))
+
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "ep") %>%
+  inner_join(ep_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > EPOPEN) %>%
+  group_by(time, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name))
+
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "hs") %>%
+  inner_join(hs_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > HSOPEN) %>%
+  group_by(time, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name))
+
+rides_df %>%
+  filter(year(mdy(date)) == 2019) %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "mk") %>%
+  inner_join(mk_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > MKOPEN) %>%
+  group_by(time, ride_name, MKPRDDT1) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name))
+```
+
