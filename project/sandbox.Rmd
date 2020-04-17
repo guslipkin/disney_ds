@@ -11,6 +11,75 @@ library(plyr)
 library(plotly)
 ```
 
+
+```{r}
+park_colors <- c("darkgreen", "cornflowerblue", "chocolate1", "blueviolet")
+temp_colors <- c("red", "orange", "yellow", "blue", "cyan")
+
+temp_list_names <- c("xhot_days", "hot_days", "normal_days", "cool_days", "xcool_days")
+days_of_week <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+```
+
+
+```{r}
+dwarfs_train <- read_csv("../data/7_dwarfs_train.csv")
+alien_saucers <- read_csv("../data/alien_saucers.csv")
+dinosaur <- read_csv("../data/dinosaur.csv")
+expedition_everest <- read_csv("../data/expedition_everest.csv")
+flight_of_passage <- read_csv("../data/flight_of_passage.csv")
+kilimanjaro_safaris <- read_csv("../data/kilimanjaro_safaris.csv")
+navi_river <- read_csv("../data/navi_river.csv")
+pirates_of_caribbean <- read_csv("../data/pirates_of_caribbean.csv")
+rock_n_rollercoaster <- read_csv("../data/rock_n_rollercoaster.csv")
+slinky_dog <- read_csv("../data/slinky_dog.csv")
+soarin <- read_csv("../data/soarin.csv")
+spaceship_earth <- read_csv("../data/spaceship_earth.csv")
+splash_mountain <- read_csv("../data/splash_mountain.csv")
+toy_story_mania <- read_csv("../data/toy_story_mania.csv")
+
+head(dwarfs_train)
+```
+
+
+```{r}
+rides <- list("dwarfs_train" = dwarfs_train, 
+              "alien_saucers" = alien_saucers,
+              "dinosaur" = dinosaur,
+              "expedition_everest" = expedition_everest,
+              "flight_of_passage" = flight_of_passage,
+              "kilimanjaro_safaris" = kilimanjaro_safaris,
+              "navi_river" = navi_river,
+              "pirates_of_caribbean" = pirates_of_caribbean,
+              "rock_n_rollercoaster" = rock_n_rollercoaster,
+              "slinky_dog" = slinky_dog,
+              "soarin" = soarin,
+              "spaceship_earth" = spaceship_earth,
+              "splash_mountain" = splash_mountain,
+              "toy_story_mania" = toy_story_mania)
+
+head(rides[1])
+```
+
+```{r}
+for (i in 1:14) {
+  rides[[i]] <- rides[[i]] %>%
+      mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
+  rides[[i]] <- rides[[i]] %>%
+    mutate(ride_name = as.factor(names(rides[i])))
+    rides[[i]] <- rides[[i]] %>%
+    filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
+}
+```
+
+```{r}
+rides_df <- rides[[1]]
+for (i in 2:14) {
+  rides_df <- rbind(rides_df, rides[[i]])
+}
+rides_df
+```
+
+
 The goal is to compare data between multiple dataframes so that only relevant data is used
 
 Each ride has its own dataframe and is also part of a larger dataframe containing all rides
