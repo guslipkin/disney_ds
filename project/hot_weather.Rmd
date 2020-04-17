@@ -8,6 +8,20 @@ library(tidyverse)
 library(reshape2)
 library(lubridate)
 library(forcats)
+library(vistime)
+```
+
+
+```{r}
+temp_illustration <- data.frame(bucket = c("x < 62.8", "62.8 <= x < 71.3", "71.3 <= x < 79.8", "79.8 >= x > 85", "x >= 85"),
+                                name = c("xcool_days", "cool_days", "normal_days", "hot_days", "xhot_days"),
+                                start = c("32-01-01", "62-09-18", "71-03-18", "79-09-18", "85-01-01"),
+                                end = c("62-09-18", "71-03-18", "79-09-18", "85-01-01", "100-01-01"),
+                                color = c("cyan", "blue", "yellow", "orange", "red"),
+                                optimize_y = TRUE)
+
+
+vistime(temp_illustration, groups = "name", events = "bucket", title = "Temperature buckets")
 ```
 
 
@@ -19,7 +33,10 @@ temps_df %>%
   scale_fill_manual(values = temp_colors) +
   coord_flip() +
   labs(fill = "Temp cat") +
-  theme(legend.justification=c(1,1), legend.position=c(1,1))
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait time for each ride at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
 ```
 
 
@@ -33,7 +50,10 @@ temps_df %>%
   scale_fill_manual(values = temp_colors) +
   coord_flip() +
   labs(fill = "Temp cat") +
-  theme(legend.justification=c(1,1), legend.position=c(1,1))
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait for rides with a splash feature at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
 ```
 
 
@@ -47,7 +67,10 @@ temps_df %>%
   scale_fill_manual(values = temp_colors) +
   coord_flip() +
   labs(fill = "Temp cat") +
-  theme(legend.justification=c(1,1), legend.position=c(1,1))
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait time for indoor rides at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
 ```
 
 
@@ -61,6 +84,9 @@ temps_df %>%
   scale_fill_manual(values = temp_colors) +
   coord_flip() +
   labs(fill = "Temp cat") +
-  theme(legend.justification=c(1,1), legend.position=c(1,1))
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait time for indoor + splash rides at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
 ```
 

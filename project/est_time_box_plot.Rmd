@@ -41,7 +41,10 @@ rides_df %>%
   ggplot(aes(x = SPOSTMIN, y = ride_name)) +
   geom_boxplot(na.rm = TRUE, outlier.shape = "circle", outlier.alpha = .1, size = 1) + 
   coord_cartesian(xlim = c(0,275)) +
-  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1)
+  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1) +
+  labs(title = "Boxplot of mean estimated wait time by ride") +
+  xlab("Wait time in minutes") +
+  ylab("Ride name")
 ```
 
 
@@ -51,7 +54,10 @@ rides_df %>% group_by(ride_name) %>%
   ggplot(aes(x = SACTMIN, y = ride_name)) +
   geom_boxplot(na.rm = TRUE, outlier.shape = "circle", outlier.alpha = .1, size = 1) +
   coord_cartesian(xlim = c(0, 200)) +
-  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1)
+  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1) +
+  labs(title = "Boxplot of mean user wait time by ride") +
+  xlab("Wait time in minutes") +
+  ylab("Ride name")
 ```
 
 
@@ -66,8 +72,10 @@ rides_df %>%
   group_by(ride_name, park) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
   ggplot() +
-  geom_col(aes(x = park, y = mean_wait, fill = ride_name), position = "dodge") 
-  #+geom_hline(yintercept = park_averages$park_averages, color = park_colors)
+  geom_col(aes(x = park, y = mean_wait, fill = ride_name), position = "dodge") +
+  labs(title = "Column chart of mean estimated wait time by ride, grouped by park", fill = "Ride name") +
+  xlab("Park (Animal Kingdom, Epcot, Hollywood Studios, Magic Kingdom)") +
+  ylab("Mean wait (minutes)")
 ```
 
 
@@ -94,6 +102,9 @@ rides_df %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
   ggplot() +
   geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait)) +
+  labs(title = "Mean estimated wait time by day for each ride") +
+  xlab("Day of the week") +
+  ylab("Mean wait (minutes)") +
   theme(axis.text.x = element_text(angle = 90)) +
   facet_wrap(~ ride_name)
 ```
@@ -105,7 +116,10 @@ rides_df %>%
   group_by(weekday, ride_name) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
   ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = ride_name)) +
-  geom_col()
+  geom_col() +
+  labs(title = "Mean combined estimated wait time by day of week") +
+  xlab("Day of the week") +
+  ylab("Mean wait (minutes)")
 ```
 
 
@@ -116,7 +130,10 @@ rides_df %>%
   group_by(weekday, park) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
   ggplot() +
-  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = park), position = "fill")
+  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = park), position = "fill") +
+  labs(title = "Mean estimated wait time by park as a portion of total wait time by day", fill = "Park") +
+  xlab("Day of the week") +
+  ylab("Portion of total wait time")
 ```
 
 
