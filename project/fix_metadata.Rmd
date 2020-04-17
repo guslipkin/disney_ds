@@ -62,19 +62,19 @@ wdw_metadata %>%
 ```{r}
 xhot_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 85)
+  filter(WDWMEANTEMP >= 85)
 
 hot_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 79.8 & WDWMEANTEMP < 85)
+  filter(WDWMEANTEMP >= 79.8 & WDWMEANTEMP < 85)
 
 normal_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 71.3 & WDWMEANTEMP < 79.8)
+  filter(WDWMEANTEMP >= 71.3 & WDWMEANTEMP < 79.8)
 
 cool_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP > 62.8 & WDWMEANTEMP < 71.3)
+  filter(WDWMEANTEMP >= 62.8 & WDWMEANTEMP < 71.3)
 
 xcool_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
