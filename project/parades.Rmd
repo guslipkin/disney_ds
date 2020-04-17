@@ -5,10 +5,8 @@ output: html_notebook
 
 ```{r}
 library(tidyverse)
+library(reshape2)
 library(lubridate)
+library(forcats)
 ```
-
-
-- Does hot weather increase wait times for rides with a "Splash_Aspect"?
-
 

@@ -1,0 +1,47 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(reshape2)
+library(lubridate)
+library(forcats)
+```
+
+
+```{r}
+wdw_metadata_2019 <- wdw_metadata %>%
+  filter(year(as.Date(mdy(DATE))) == 2019)
+wdw_metadata_2019
+
+seasons <- c("WINTER", "MARTIN LUTHER KING JUNIOR DAY", "PRESIDENTS WEEK", "SPRING", "MARDI GRAS", "EASTER", "MEMORIAL DAY", "SUMMER BREAK",
+             "JULY 4TH", "SEPTEMBER LOW", "FALL", "COLUMBUS DAY", "HALLOWEEN", "JERSEY WEEK", "THANKSGIVING", "CHRISTMAS", "CHRISTMAS PEAK")
+```
+
+
+```{r}
+wdw_metadata_2019 %>%
+  ggplot() +
+  geom_bar(aes(x = HOLIDAYPX))
+```
+
+
+```{r}
+wdw_metadata_2019 %>%
+  group_by(SEASON) %>%
+  ggplot() +
+  geom_bar(aes(y = ordered(SEASON, levels = rev(seasons)), fill = as.factor(HOLIDAYPX)))
+```
+
+
+```{r}
+wdw_metadata %>%
+  inner_join(rides_df, by = c("DATE" = "date")) %>%
+  group_by(HOLIDAYPX) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = HOLIDAYPX, y = mean_wait))
+```
+

@@ -14,8 +14,7 @@ metadata <- read_csv("../data/metadata.csv")
 metadata
 ```
 
-```{r}
-if (FALSE) {
+```{r, eval=FALSE}
 mk_metadata <- metadata %>%
   select(DATE, SEASON, HOLIDAYPX, HOLIDAYN, WDWMAXTEMP, WDWMINTEMP, WDWMEANTEMP, HOLIDAYJ, MKOPEN, MKCLOSE, MKEMHOPEN, MKEMHCLOSE, WEATHER_WDWPRECIP,
          MKPRDDT1, MKPRDDT2, MKPRDNT1, MKPRDNT2, MKFIRET1, MKFIRET2)
@@ -28,12 +27,11 @@ hs_metadata <- metadata %>%
 ak_metadata <- metadata %>%
   select(DATE, SEASON, HOLIDAYPX, HOLIDAYN, WDWMAXTEMP, WDWMINTEMP, WDWMEANTEMP, HOLIDAYJ, AKOPEN, AKCLOSE, AKEMHOPEN, AKEMHCLOSE, WEATHER_WDWPRECIP,
          AKPRDDT1, AKPRDDT2, AKSHWNT1, AKSHWNT2)
-}
 ```
 
 
 ```{r}
-metadata$DATE <- format(as.POSIXct(mdy(metadata$DATE) + 1, format = '%m/%d/%Y %H:%M:%S'), format='%Y-%m-%d')
+metadata$DATE <- format(as.POSIXct(mdy(metadata$DATE) + 1, format = '%m/%d/%Y %H:%M:%S'), format='%m/%d/%Y')
 head(metadata)
 ```
 
@@ -54,3 +52,33 @@ head(wdw_metadata)
 head(mk_metadata)
 ```
 
+
+```{r}
+wdw_metadata %>%
+  summarise(mean(WDWMEANTEMP, na.rm = T), mean(WDWMINTEMP, na.rm = T), mean(WDWMAXTEMP, na.rm = T))
+```
+
+
+```{r}
+xhot_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 85)
+
+hot_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 79.8 & WDWMEANTEMP < 85)
+
+normal_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 71.3 & WDWMEANTEMP < 79.8)
+
+cool_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP > 62.8 & WDWMEANTEMP < 71.3)
+
+xcool_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP < 62.8)
+
+xcool_days
+```
