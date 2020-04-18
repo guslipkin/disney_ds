@@ -16,7 +16,7 @@ wdw_metadata_2019 <- wdw_metadata %>%
   filter(year(as.Date(mdy(DATE))) == 2019)
 wdw_metadata_2019
 
-seasons <- c("WINTER", "MARTIN LUTHER KING JUNIOR DAY", "PRESIDENTS WEEK", "SPRING", "MARDI GRAS", "EASTER", "MEMORIAL DAY", "SUMMER BREAK",
+seasons <- c("WINTER", "MLK DAY", "PRESIDENTS WEEK", "SPRING", "MARDI GRAS", "EASTER", "MEMORIAL DAY", "SUMMER BREAK",
              "JULY 4TH", "SEPTEMBER LOW", "FALL", "COLUMBUS DAY", "HALLOWEEN", "JERSEY WEEK", "THANKSGIVING", "CHRISTMAS", "CHRISTMAS PEAK")
 ```
 
@@ -24,7 +24,10 @@ seasons <- c("WINTER", "MARTIN LUTHER KING JUNIOR DAY", "PRESIDENTS WEEK", "SPRI
 ```{r}
 wdw_metadata_2019 %>%
   ggplot() +
-  geom_bar(aes(x = HOLIDAYPX))
+  geom_bar(aes(x = HOLIDAYPX)) +
+  labs(title = "Histogram of proximity of a day at the park to a holiday in 2019") +
+  xlab("Proximity (days") +
+  ylab("Count")
 ```
 
 
@@ -32,7 +35,10 @@ wdw_metadata_2019 %>%
 wdw_metadata_2019 %>%
   group_by(SEASON) %>%
   ggplot() +
-  geom_bar(aes(y = ordered(SEASON, levels = rev(seasons)), fill = as.factor(HOLIDAYPX)))
+  geom_bar(aes(y = ordered(SEASON, levels = rev(seasons)), fill = as.factor(HOLIDAYPX))) +
+  labs(title = "Proximity to a holiday in any given portion of a ticket season", fill = "\nDays from a holiday") +
+  xlab("Total days in a season") +
+  ylab("Seasons")
 ```
 
 
@@ -42,6 +48,9 @@ wdw_metadata %>%
   group_by(HOLIDAYPX) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
   ggplot() +
-  geom_col(aes(x = HOLIDAYPX, y = mean_wait))
+  geom_col(aes(x = HOLIDAYPX, y = mean_wait)) +
+  labs(title = "Mean estimated wait time by proximity to a holiday") +
+  xlab("Proximity (days)") +
+  ylab("Wait time (minutes)")
 ```
 
