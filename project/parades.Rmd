@@ -34,7 +34,10 @@ rides_df %>%
   ggplot() +
   geom_col(aes(x = time, y = mean_wait), width = 1) +
   theme(axis.text.x = element_text(angle = 90)) +
-  facet_grid(rows = vars(ride_name))
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
 
 rides_df %>%
   inner_join(ride_metadata) %>%
@@ -47,7 +50,10 @@ rides_df %>%
   ggplot() +
   geom_col(aes(x = time, y = mean_wait), width = 1) +
   theme(axis.text.x = element_text(angle = 90)) +
-  facet_grid(rows = vars(ride_name))
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
 
 rides_df %>%
   inner_join(ride_metadata) %>%
@@ -60,7 +66,10 @@ rides_df %>%
   ggplot() +
   geom_col(aes(x = time, y = mean_wait), width = 1) +
   theme(axis.text.x = element_text(angle = 90)) +
-  facet_grid(rows = vars(ride_name))
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
 
 rides_df %>%
   filter(year(mdy(date)) == 2019) %>%
@@ -74,6 +83,9 @@ rides_df %>%
   ggplot() +
   geom_col(aes(x = time, y = mean_wait), width = 1) +
   theme(axis.text.x = element_text(angle = 90)) +
-  facet_grid(rows = vars(ride_name))
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
 ```
 

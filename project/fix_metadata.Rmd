@@ -56,6 +56,9 @@ head(mk_metadata)
 ```{r}
 wdw_metadata %>%
   summarise(mean(WDWMEANTEMP, na.rm = T), mean(WDWMINTEMP, na.rm = T), mean(WDWMAXTEMP, na.rm = T))
+wdw_metadata$HOLIDAYPX <- ifelse(wdw_metadata$HOLIDAYPX > 0, wdw_metadata$HOLIDAYPX - 1, wdw_metadata$HOLIDAYPX)
+wdw_metadata$SEASON <- ifelse(wdw_metadata$SEASON == "MARTIN LUTHER KING JUNIOR DAY", "MLK DAY", wdw_metadata$SEASON)
+wdw_metadata
 ```
 
 
@@ -66,7 +69,7 @@ xhot_days <- wdw_metadata %>%
 
 hot_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP >= 79.8 & WDWMEANTEMP < 85)
+  filter(WDWMEANTEMP < 85 & WDWMEANTEMP >= 79.8)
 
 normal_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
