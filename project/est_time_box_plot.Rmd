@@ -139,28 +139,13 @@ rides_df %>%
 
 ```{r}
 rides_df %>%
-  mutate(month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
-         monthweek = ceiling(day(mdy(date)) / 7)) %>%
-  group_by(month, day, monthweek) %>%
-  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
-  ggplot(aes(x = month, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
-  geom_tile(color = "grey") +
-  facet_grid(~monthweek) +
-  #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
-  scale_fill_distiller(palette = "Spectral") +
-  labs(fill = "Wait (min)", title = "Mean wait time by day of the month for all rides", x = "No idea, tbh", y = "")
-```
-
-
-```{r}
-rides_df %>%
   mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
          monthweek = ceiling(day(mdy(date)) / 7)) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
   geom_tile(color = "grey") +
-  facet_grid(~month) +
+  facet_wrap(~month) +
   #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
   scale_fill_distiller(palette = "Spectral") +
   labs(fill = "Wait (min)", title = "Mean wait time by day of the year for all rides", x = "Week of the month", y = "")
