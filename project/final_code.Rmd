@@ -1,0 +1,495 @@
+```{r}
+library(tidyverse)
+library(lubridate)
+library(reshape2)
+library(forcats)
+library(vistime)
+```
+
+
+```{r}
+metadata <- read_csv("../data/metadata.csv")
+```
+
+
+```{r}
+metadata$DATE <- format(as.POSIXct(mdy(metadata$DATE) + 1, format = '%m/%d/%Y %H:%M:%S'), format='%m/%d/%Y')
+```
+
+
+```{r}
+wdw_metadata <- metadata %>%
+  select(DATE, SEASON, HOLIDAYPX, HOLIDAYN, WDWMAXTEMP, WDWMINTEMP, WDWMEANTEMP, HOLIDAYJ, WEATHER_WDWPRECIP)
+mk_metadata <- metadata %>%
+  select(DATE, MKOPEN, MKCLOSE, MKEMHOPEN, MKEMHCLOSE, MKPRDDT1, MKPRDDT2, MKPRDNT1, MKPRDNT2, MKFIRET1, MKFIRET2)
+ep_metadata <- metadata %>%
+  select(DATE, EPOPEN, EPCLOSE, EPEMHOPEN, EPEMHCLOSE, EPFIRET1, EPFIRET2)
+hs_metadata <- metadata %>%
+  select(DATE, HSOPEN, HSCLOSE, HSEMHOPEN, HSEMHCLOSE, HSPRDDT1, HSFIRET1, HSFIRET2, HSSHWNT1, HSSHWNT2)
+ak_metadata <- metadata %>%
+  select(DATE, AKOPEN, AKCLOSE, AKEMHOPEN, AKEMHCLOSE, AKPRDDT1, AKPRDDT2, AKSHWNT1, AKSHWNT2)
+```
+
+
+```{r}
+wdw_metadata$HOLIDAYPX <- ifelse(wdw_metadata$HOLIDAYPX > 0, wdw_metadata$HOLIDAYPX - 1, wdw_metadata$HOLIDAYPX)
+wdw_metadata$SEASON <- ifelse(wdw_metadata$SEASON == "MARTIN LUTHER KING JUNIOR DAY", "MLK DAY", wdw_metadata$SEASON)
+```
+
+
+```{r}
+xhot_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP >= 85)
+
+hot_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP < 85 & WDWMEANTEMP >= 79.8)
+
+normal_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP >= 71.3 & WDWMEANTEMP < 79.8)
+
+cool_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP >= 62.8 & WDWMEANTEMP < 71.3)
+
+xcool_days <- wdw_metadata %>%
+  select(DATE, WDWMEANTEMP) %>%
+  filter(WDWMEANTEMP < 62.8)
+```
+
+
+```{r}
+park_colors <- c("darkgreen", "cornflowerblue", "chocolate1", "blueviolet")
+temp_colors <- c("red", "orange", "yellow", "blue", "cyan")
+
+temp_list_names <- c("xhot_days", "hot_days", "normal_days", "cool_days", "xcool_days")
+days_of_week <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+```
+
+
+```{r, error=FALSE}
+dwarfs_train <- read_csv("../data/7_dwarfs_train.csv")
+alien_saucers <- read_csv("../data/alien_saucers.csv")
+dinosaur <- read_csv("../data/dinosaur.csv")
+expedition_everest <- read_csv("../data/expedition_everest.csv")
+flight_of_passage <- read_csv("../data/flight_of_passage.csv")
+kilimanjaro_safaris <- read_csv("../data/kilimanjaro_safaris.csv")
+navi_river <- read_csv("../data/navi_river.csv")
+pirates_of_caribbean <- read_csv("../data/pirates_of_caribbean.csv")
+rock_n_rollercoaster <- read_csv("../data/rock_n_rollercoaster.csv")
+slinky_dog <- read_csv("../data/slinky_dog.csv")
+soarin <- read_csv("../data/soarin.csv")
+spaceship_earth <- read_csv("../data/spaceship_earth.csv")
+splash_mountain <- read_csv("../data/splash_mountain.csv")
+toy_story_mania <- read_csv("../data/toy_story_mania.csv")
+```
+
+
+```{r}
+rides <- list("dwarfs_train" = dwarfs_train, 
+              "alien_saucers" = alien_saucers,
+              "dinosaur" = dinosaur,
+              "expedition_everest" = expedition_everest,
+              "flight_of_passage" = flight_of_passage,
+              "kilimanjaro_safaris" = kilimanjaro_safaris,
+              "navi_river" = navi_river,
+              "pirates_of_caribbean" = pirates_of_caribbean,
+              "rock_n_rollercoaster" = rock_n_rollercoaster,
+              "slinky_dog" = slinky_dog,
+              "soarin" = soarin,
+              "spaceship_earth" = spaceship_earth,
+              "splash_mountain" = splash_mountain,
+              "toy_story_mania" = toy_story_mania)
+```
+
+
+```{r}
+for (i in 1:14) {
+  rides[[i]] <- rides[[i]] %>%
+      mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
+  rides[[i]] <- rides[[i]] %>%
+    mutate(ride_name = as.factor(names(rides[i])))
+    rides[[i]] <- rides[[i]] %>%
+    filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
+}
+```
+
+
+```{r}
+ride_name <- c("dwarfs_train", "alien_saucers", "dinosaur", "expedition_everest", "flight_of_passage", 
+               "kilimanjaro_safaris", "navi_river", "pirates_of_caribbean", "rock_n_rollercoaster", "slinky_dog", 
+               "soarin", "spaceship_earth", "splash_mountain", "toy_story_mania")
+open_date <- as.POSIXct(c("2014/05/28", "2018/06/30", "1998/04/22", "2006/04/09", "2017/05/27", 
+                       "1998/04/22", "2017/05/27", "1973/12/17", "1999/07/29", "2018/06/30", 
+                       "2005/05/15", "1982/10/01", "1992/07/17", "2008/05/31"))
+splash <- c(FALSE, FALSE, FALSE, FALSE, TRUE,
+            FALSE, FALSE, TRUE,  FALSE, FALSE,
+            FALSE, FALSE, TRUE,  FALSE)
+indoor <- c(FALSE, FALSE, TRUE,  FALSE, TRUE,
+            FALSE, TRUE,  TRUE,  TRUE,  FALSE,
+            TRUE,  TRUE,  FALSE, TRUE)
+age_hierarchy <- c(10, 13,  4,  8, 11,
+                    5, 12,  1,  6, 14,
+                    7,  2,  3,  9)
+park <- c("mk", "hs", "ak", "ak", "ak", 
+          "ak", "ak", "mk", "hs", "hs", 
+          "ep", "ep", "mk", "hs")
+ride_metadata <- data.frame(ride_name, open_date, age_hierarchy, splash, indoor, park)
+```
+
+
+```{r}
+rides_df <- rides[[1]]
+for (i in 2:14) {
+  rides_df <- rbind(rides_df, rides[[i]])
+}
+```
+
+
+```{r, eval=FALSE}
+rides_df %>%
+    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
+    group_by(ride_name) %>%
+    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+    mutate(temp_cat = temp_list_names[1])
+```
+
+
+```{r}
+temp_list <- list(xhot_days, hot_days, normal_days, cool_days, xcool_days)
+
+temps_df <- rides_df %>%
+    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
+    mutate(temp_cat = temp_list_names[1])
+for (i in 2:5) {
+  df <- rides_df %>%
+    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[i]]$DATE))) %>%
+    mutate(temp_cat = temp_list_names[i])
+  temps_df <- rbind(temps_df, df)
+}
+```
+
+
+```{r}
+temps_df <- temps_df %>%
+  group_by(ride_name, temp_cat) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
+```
+
+
+```{r}
+rides_df %>%
+  filter(datetime > as.POSIXct("2018-06-30")) %>%
+  ggplot(aes(x = SPOSTMIN, y = ride_name)) +
+  geom_boxplot(na.rm = TRUE, outlier.shape = "circle", outlier.alpha = .1, size = 1) + 
+  coord_cartesian(xlim = c(0,275)) +
+  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1) +
+  labs(title = "Boxplot of mean estimated wait time by ride") +
+  xlab("Wait time in minutes") +
+  ylab("Ride name")
+```
+
+
+```{r}
+rides_df %>% group_by(ride_name) %>%
+  filter(datetime > as.POSIXct("2018-06-30")) %>%
+  ggplot(aes(x = SACTMIN, y = ride_name)) +
+  geom_boxplot(na.rm = TRUE, outlier.shape = "circle", outlier.alpha = .1, size = 1) +
+  coord_cartesian(xlim = c(0, 200)) +
+  geom_vline(xintercept = c(30, 60, 90, 120), color = c("green", "yellow", "orange", "red"), size = 1) +
+  labs(title = "Boxplot of mean user wait time by ride") +
+  xlab("Wait time in minutes") +
+  ylab("Ride name")
+```
+
+
+```{r}
+park_averages <- rides_df %>%
+  inner_join(ride_metadata) %>%
+  group_by(park) %>%
+  summarise(park_averages = mean(SPOSTMIN, na.rm = TRUE))
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  mutate(weekday = weekdays(datetime)) %>%
+  group_by(ride_name, park) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = park, y = mean_wait, fill = ride_name), position = "dodge") +
+  labs(title = "Column chart of mean estimated wait time by ride, grouped by park", fill = "Ride name") +
+  xlab("Park (Animal Kingdom, Epcot, Hollywood Studios, Magic Kingdom)") +
+  ylab("Mean wait (minutes)")
+```
+
+
+```{r}
+rides_df %>%
+  mutate(weekday = weekdays(datetime)) %>%
+  group_by(weekday, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait)) +
+  labs(title = "Mean estimated wait time by day for each ride") +
+  xlab("Day of the week") +
+  ylab("Mean wait (minutes)") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_wrap(~ ride_name)
+```
+
+
+```{r}
+rides_df %>%
+  mutate(weekday = weekdays(datetime)) %>%
+  group_by(weekday, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = ride_name)) +
+  geom_col() +
+  labs(title = "Mean combined estimated wait time by day of week") +
+  xlab("Day of the week") +
+  ylab("Mean wait (minutes)")
+```
+
+
+```{r}
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  mutate(weekday = weekdays(datetime)) %>%
+  group_by(weekday, park) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait, fill = park), position = "fill") +
+  labs(title = "Mean estimated wait time by park as a portion of total wait time by day", fill = "Park") +
+  xlab("Day of the week") +
+  ylab("Portion of total wait time")
+```
+
+```{r}
+wdw_metadata_2019 <- wdw_metadata %>%
+  filter(year(as.Date(mdy(DATE))) == 2019)
+
+seasons <- c("WINTER", "MLK DAY", "PRESIDENTS WEEK", "SPRING", "MARDI GRAS", "EASTER", "MEMORIAL DAY", "SUMMER BREAK",
+             "JULY 4TH", "SEPTEMBER LOW", "FALL", "COLUMBUS DAY", "HALLOWEEN", "JERSEY WEEK", "THANKSGIVING", "CHRISTMAS", "CHRISTMAS PEAK")
+```
+
+
+```{r}
+wdw_metadata_2019 %>%
+  ggplot() +
+  geom_bar(aes(x = HOLIDAYPX)) +
+  labs(title = "Histogram of proximity of a day at the park to a holiday in 2019") +
+  xlab("Proximity (days") +
+  ylab("Count")
+```
+
+
+```{r}
+wdw_metadata_2019 %>%
+  group_by(SEASON) %>%
+  ggplot() +
+  geom_bar(aes(y = ordered(SEASON, levels = rev(seasons)), fill = as.factor(HOLIDAYPX))) +
+  labs(title = "Proximity to a holiday in any given portion of a ticket season", fill = "\nDays from a holiday") +
+  xlab("Total days in a season") +
+  ylab("Seasons")
+```
+
+
+```{r}
+wdw_metadata %>%
+  inner_join(rides_df, by = c("DATE" = "date")) %>%
+  group_by(HOLIDAYPX) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = HOLIDAYPX, y = mean_wait)) +
+  labs(title = "Mean estimated wait time by proximity to a holiday") +
+  xlab("Proximity (days)") +
+  ylab("Wait time (minutes)")
+```
+
+
+```{r}
+rides_df %>%
+  mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
+  ggplot(aes(x = monthweek, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
+  geom_tile(color = "grey") +
+  facet_wrap(~month) +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by day of the year for all rides", x = "Week of the month", y = "")
+```
+
+
+```{r}
+rides_df %>%
+  mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = wday(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
+  ggplot(aes(x = monthweek, y = ordered(day, levels = days_of_week), fill = mean_wait)) +
+  geom_tile(color = "grey") +
+  facet_grid(~month) +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by week of the year for all rides", x = "Week of the month", y = "")
+```
+
+
+```{r}
+temp_illustration <- data.frame(bucket = c("x < 62.8", "62.8 <= x < 71.3", "71.3 <= x < 79.8", "79.8 >= x > 85", "x >= 85"),
+                                name = c("xcool_days", "cool_days", "normal_days", "hot_days", "xhot_days"),
+                                start = c("32-01-01", "62-09-18", "71-03-18", "79-09-18", "85-01-01"),
+                                end = c("62-09-18", "71-03-18", "79-09-18", "85-01-01", "100-01-01"),
+                                color = c("cyan", "blue", "yellow", "orange", "red"),
+                                optimize_y = TRUE)
+
+vistime(temp_illustration, groups = "name", events = "bucket", title = "Temperature buckets")
+```
+
+
+```{r}
+temps_df %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait time for each ride at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
+```
+
+
+```{r}
+temps_df %>%
+  inner_join(ride_metadata) %>%
+  filter(splash == TRUE) %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait for rides with a splash feature at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
+```
+
+
+```{r}
+temps_df %>%
+  inner_join(ride_metadata) %>%
+  filter(indoor == TRUE) %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait time for indoor rides at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
+```
+
+
+```{r}
+temps_df %>%
+  inner_join(ride_metadata) %>%
+  filter(splash == TRUE & indoor == TRUE) %>%
+  group_by(ride_name) %>%
+  ggplot() +
+  geom_col(aes(x = ride_name, y = mean_wait, fill = fct_relevel(temp_cat, temp_list_names)), position = "dodge") +
+  scale_fill_manual(values = temp_colors) +
+  coord_flip() +
+  labs(fill = "Temp cat") +
+  theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+  labs(title = "Mean estimated wait time for indoor + splash rides at a temperature", fill = "Temperature") +
+  ylab("Mean wait (minutes)") +
+  xlab("Ride")
+```
+
+
+```{r}
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "ak") %>%
+  inner_join(ak_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > AKOPEN) %>%
+  group_by(time, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
+
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "ep") %>%
+  inner_join(ep_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > EPOPEN) %>%
+  group_by(time, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
+
+rides_df %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "hs") %>%
+  inner_join(hs_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > HSOPEN) %>%
+  group_by(time, ride_name) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
+
+rides_df %>%
+  filter(year(mdy(date)) == 2019) %>%
+  inner_join(ride_metadata) %>%
+  filter(park == "mk") %>%
+  inner_join(mk_metadata, by = c("date" = "DATE")) %>%
+  mutate(time = format(round_date(ymd_hms(datetime), "30 minutes"), "%H:%M")) %>%
+  filter(hm(time) > MKOPEN) %>%
+  group_by(time, ride_name, MKPRDDT1) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
+  ggplot() +
+  geom_col(aes(x = time, y = mean_wait), width = 1) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_grid(rows = vars(ride_name)) +
+  labs(title = "Mean estimated wait time by time of day") +
+  xlab("Time") +
+  ylab("Wait time (minutes)")
+```
+
+
+```{r}
+wdw_metadata %>%
+  mutate(year = year(as.POSIXct(ymd(DATE) + 1)), month = month(as.POSIXct(ymd(DATE) + 1)), day = weekdays(as.POSIXct(ymd(DATE) + 1)),
+         monthweek = ceiling(day(ymd(DATE)) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_rain = mean(WEATHER_WDWPRECIP, na.rm = TRUE)) %>% 
+  ggplot(aes(x = monthweek, y = day, fill = mean_rain)) +
+  geom_tile(color = "grey") +
+  facet_grid(~month) +
+  scale_fill_gradient2(low = "cyan", mid = "deepskyblue4", high = "navy", midpoint = .2) +
+  labs(fill = "Rain (in)", title = "Mean historical rainfall by day", x = "Week of the month", y = "")
+```
