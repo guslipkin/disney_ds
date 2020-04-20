@@ -14,7 +14,6 @@ library(forcats)
 ```{r}
 wdw_metadata_2019 <- wdw_metadata %>%
   filter(year(as.Date(mdy(DATE))) == 2019)
-wdw_metadata_2019
 
 seasons <- c("WINTER", "MLK DAY", "PRESIDENTS WEEK", "SPRING", "MARDI GRAS", "EASTER", "MEMORIAL DAY", "SUMMER BREAK",
              "JULY 4TH", "SEPTEMBER LOW", "FALL", "COLUMBUS DAY", "HALLOWEEN", "JERSEY WEEK", "THANKSGIVING", "CHRISTMAS", "CHRISTMAS PEAK")
