@@ -1,0 +1,248 @@
+---
+title: "Sandbox Rei"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(forcats)
+#library(plyr)
+library(plotly)
+```
+
+
+```{r}
+park_colors <- c("darkgreen", "cornflowerblue", "chocolate1", "blueviolet")
+temp_colors <- c("red", "orange", "yellow", "blue", "cyan")
+
+temp_list_names <- c("xhot_days", "hot_days", "normal_days", "cool_days", "xcool_days")
+days_of_week <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+```
+
+
+```{r}
+dwarfs_train <- read_csv("../data/7_dwarfs_train.csv")
+alien_saucers <- read_csv("../data/alien_saucers.csv")
+dinosaur <- read_csv("../data/dinosaur.csv")
+expedition_everest <- read_csv("../data/expedition_everest.csv")
+flight_of_passage <- read_csv("../data/flight_of_passage.csv")
+kilimanjaro_safaris <- read_csv("../data/kilimanjaro_safaris.csv")
+navi_river <- read_csv("../data/navi_river.csv")
+pirates_of_caribbean <- read_csv("../data/pirates_of_caribbean.csv")
+rock_n_rollercoaster <- read_csv("../data/rock_n_rollercoaster.csv")
+slinky_dog <- read_csv("../data/slinky_dog.csv")
+soarin <- read_csv("../data/soarin.csv")
+spaceship_earth <- read_csv("../data/spaceship_earth.csv")
+splash_mountain <- read_csv("../data/splash_mountain.csv")
+toy_story_mania <- read_csv("../data/toy_story_mania.csv")
+
+head(dwarfs_train)
+```
+
+
+```{r}
+rides <- list("dwarfs_train" = dwarfs_train, 
+              "alien_saucers" = alien_saucers,
+              "dinosaur" = dinosaur,
+              "expedition_everest" = expedition_everest,
+              "flight_of_passage" = flight_of_passage,
+              "kilimanjaro_safaris" = kilimanjaro_safaris,
+              "navi_river" = navi_river,
+              "pirates_of_caribbean" = pirates_of_caribbean,
+              "rock_n_rollercoaster" = rock_n_rollercoaster,
+              "slinky_dog" = slinky_dog,
+              "soarin" = soarin,
+              "spaceship_earth" = spaceship_earth,
+              "splash_mountain" = splash_mountain,
+              "toy_story_mania" = toy_story_mania)
+
+head(rides[1])
+```
+
+```{r}
+for (i in 1:14) {
+  rides[[i]] <- rides[[i]] %>%
+      mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
+  rides[[i]] <- rides[[i]] %>%
+    mutate(ride_name = as.factor(names(rides[i])))
+    rides[[i]] <- rides[[i]] %>%
+    filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
+}
+```
+
+```{r}
+rides_df <- rides[[1]]
+for (i in 2:14) {
+  rides_df <- rbind(rides_df, rides[[i]])
+}
+rides_df
+```
+
+
+The goal is to compare data between multiple dataframes so that only relevant data is used
+
+Each ride has its own dataframe and is also part of a larger dataframe containing all rides
+
+There is a metadata dataframe that has relevant data for each of the four parks
+
+We want to create a new dataframe that has each ride as the row, the park its in, the ride opening data, if it has a splash aspect, and if it is indoors
+
+***
+
+> RSA: I am assuming the plot below is the one that needs to be reviewed.
+
+Checking the dataframe being used:
+
+```{r}
+# checking for one of the parks
+rides_df %>% 
+  filter(ride_name == "dwarfs_train") %>% 
+  mutate(
+    myyear = year(datetime), 
+    mymonth = month(datetime, label = TRUE), 
+    myday = day(datetime), 
+    myday_week = wday(datetime, label = TRUE), 
+    myweek_month = week(datetime) # 
+      
+  ) %>% 
+  group_by(myday_week, mymonth, myweek_month) %>% 
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = T))
+```
+
+Possible plot: 
+
+```{r}
+# checking for one of the parks
+rides_df %>% 
+  filter(ride_name == "dwarfs_train") %>% 
+  mutate(
+    myyear = year(datetime), 
+    mymonth = month(datetime, label = TRUE), 
+    myday = day(datetime), 
+    myday_week = wday(datetime, label = TRUE), 
+    myweek_month = week(datetime) # 
+  ) %>% 
+  group_by(myday_week, mymonth, myweek_month) %>% 
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = T)) %>% 
+  ggplot() +
+  geom_tile(color = "grey", aes(x = myday_week, y = myweek_month , fill = mean_wait)) +
+  facet_wrap(~mymonth , scales = "free") +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by day of the year", 
+       x = "", y = "") + 
+  theme(legend.position = "bottom")
+```
+
+(you could think how to get the weeks of the month from the example above, so that instead of 1-52, it shows 1-5)
+
+A calendar for one single year:
+
+```{r}
+rides_df %>% 
+  filter(ride_name == "dwarfs_train") %>% 
+  mutate(
+    myyear = year(datetime), 
+    mymonth = month(datetime, label = TRUE), 
+    myday = day(datetime), 
+    myday_week = wday(datetime, label = TRUE), 
+    year_week = week(datetime)
+    ) %>% 
+  filter(myyear == 2019) %>% 
+  group_by(mymonth, myday, myday_week, year_week) %>% 
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = T)) %>% 
+  ggplot(aes(x = myday_week, y = year_week , fill = mean_wait)) +
+  geom_tile(color = "grey") +
+  geom_text(aes(label = myday), size = 2) + 
+  facet_wrap(~mymonth , scales = "free") +
+  theme(axis.ticks.y = element_blank()) +
+  theme(axis.text.y = element_blank()) +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by day for 2019", 
+       x = "", y = "") + 
+  theme(legend.position = "bottom")
+```
+
+
+
+To do: 
+- Instead of weeks 1 - 52
+
+***
+
+
+
+
+```{r}
+rides_df %>%
+  mutate(year = year(as.POSIXct(mdy(date) + 1)), 
+         month = month(as.POSIXct(mdy(date) + 1)), 
+         day = weekdays(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date) + 1) / 7)) %>%
+  group_by(month, day, monthweek) %>% 
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) 
+```
+
+
+```{r}
+rides_df %>%
+  mutate(year = year(as.POSIXct(mdy(date) + 1)), 
+         month = month(as.POSIXct(mdy(date) + 1)), 
+         day = weekdays(as.POSIXct(mdy(date) + 1)),
+         monthweek = ceiling(day(mdy(date) + 1) / 7)) %>%
+  group_by(month, day, monthweek) %>%
+  summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
+  ggplot(aes(x = monthweek, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
+  geom_tile(color = "grey") +
+  facet_grid(~month) +
+  #scale_fill_gradient2(low = "blue", mid = "orange", high = "red", midpoint = 60) +
+  scale_fill_distiller(palette = "Spectral") +
+  labs(fill = "Wait (min)", title = "Mean wait time by day of the year for all rides", x = "Week of the month", y = "")
+```
+
+```{r, eval = FALSE}
+rides_test <- rides_df
+
+rides_test$weekday <- as.POSIXlt(mdy(rides_test$date))$wday
+
+rides_test$weekdayf <- factor(rides_test$weekday,levels=rev(1:7),labels=rev(c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")),ordered=TRUE)
+
+rides_test$monthf<-factor(month(mdy(rides_test$date)),levels=as.character(1:12),labels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),ordered=TRUE)
+
+rides_test$yearmonth<- factor(as.yearmon(mdy(rides_test$date)))
+
+rides_test$week <- as.numeric(format(mdy(rides_test$date),"%W"))
+
+rides_test <- ddply(rides_test,.(yearmonth), transform, monthweek = 1 + week -min(week))
+
+ggplot(rides_test, aes(monthweek, weekdayf, fill = SPOSTMIN)) + 
+  geom_tile(colour = "white") + 
+  facet_grid(~monthf) + 
+  scale_fill_distiller(palette = "Spectral") + 
+  xlab("Week of Month") + 
+  ylab("") + 
+  ggtitle("Time-Series Calendar Heatmap: AMZN Stock Prices") + 
+  labs(fill = "Price") 
+```
+
+```{r, eval = FALSE}
+rides_test <- rides_df
+rides_test %>%
+  mutate(
+    weekday = as.POSIXlt(mdy(rides_test$date))$wday) %>%
+  mutate(
+    monthf = factor(month(mdy(rides_test$date)),levels=as.character(1:12),labels=c("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"),ordered=TRUE),
+    yearmonth = factor(as.yearmon(mdy(rides_test$date))),
+    week = as.numeric(format(mdy(rides_test$date),"%W"))
+  ) %>%
+  ddply(.(yearmonth), transform, monthweek = 1 + week - min(week)) %>%
+ggplot(aes(monthweek, factor(rides_test$weekday,levels=rev(1:7),labels=rev(c("Mon","Tue","Wed","Thu","Fri","Sat","Sun")),ordered=TRUE), fill = SPOSTMIN)) + 
+  geom_tile(colour = "white") + 
+  facet_grid(year(mdy(rides_test$date))~monthf) + 
+  scale_fill_gradient(low="red", high="green") + 
+  xlab("Week of Month") + 
+  ylab("") + 
+  ggtitle("Time-Series Calendar Heatmap: AMZN Stock Prices") + 
+  labs(fill = "Price") 
+```
+
