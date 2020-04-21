@@ -59,18 +59,6 @@ rides <- list("dwarfs_train" = dwarfs_train,
 head(rides[1])
 ```
 
-# Can we make this faster?
-```{r, eval=FALSE}
-for (i in 1:14) {
-  rides[[i]] <- rides[[i]] %>%
-    mutate(time = format(ymd_hms(datetime), "%H:%M:%S"))
-  rides[[i]] <- rides[[i]] %>%
-    mutate(ride_name = as.factor(names(rides[i])))
-}
-
-head(rides[[1]])
-```
-
 
 Remove rows with -999 as the estimated wait time
 ```{r, eval=FALSE}
@@ -92,32 +80,6 @@ for (i in 1:14) {
     rides[[i]] <- rides[[i]] %>%
     filter(SPOSTMIN != -999 | is.na(SPOSTMIN))
 }
-```
-
-# Rides that have a splash aspect:
-```{r, eval=FALSE}
-#This code has been replaced by the next chunk
-splash <- c("pirates_of_caribbean", "splash_mountain", "flight_of_passage")
-indoor <- c("dinosaur", "flight_of_passage", "navi_river", "pirates_of_caribbean", 
-            "rock_n_rollercoaster", "soarin", "spaceship_earth", "toy_story_mania")
-for (i in 1:14) {
-  if (names(rides[i]) %in% splash) {
-    rides[[i]] <- rides[[i]] %>%
-    mutate(splash = TRUE)
-  } else {
-    rides[[i]] <- rides[[i]] %>%
-    mutate(splash = FALSE)
-  }
-  if (names(rides[i]) %in% indoor) {
-    rides[[i]] <- rides[[i]] %>%
-    mutate(indoor = TRUE)
-  } else {
-    rides[[i]] <- rides[[i]] %>%
-    mutate(indoor = FALSE)
-  }
-}
-
-head(rides[[13]])
 ```
 
 
@@ -153,31 +115,10 @@ for (i in 2:14) {
 rides_df
 ```
 
+
 ```{r}
 rides_df %>%
-    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
-    group_by(ride_name) %>%
-    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-    mutate(temp_cat = temp_list_names[1])
-```
-
-```{r, eval = FALSE}
-temp_list <- list(xhot_days, hot_days, normal_days, cool_days, xcool_days)
-
-temps_df <- rides_df %>%
-    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
-    group_by(ride_name) %>%
-    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-    mutate(temp_cat = temp_list_names[1])
-for (i in 2:5) {
-  df <- rides_df %>%
-    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[i]]$DATE))) %>%
-    group_by(ride_name) %>%
-    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-    mutate(temp_cat = temp_list_names[i])
-  temps_df <- rbind(temps_df, df)
-}
-temps_df
+  inner_join(temp_days, by = c("date" = "DATE"))
 ```
 
 
@@ -185,20 +126,23 @@ temps_df
 temp_list <- list(xhot_days, hot_days, normal_days, cool_days, xcool_days)
 
 temps_df <- rides_df %>%
-    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
-    mutate(temp_cat = temp_list_names[1])
+    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_days$DATE)))#match dates in rides_df and the temp_list[i]
+temps_df
+if(FALSE) {
 for (i in 2:5) {
   df <- rides_df %>%
     filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[i]]$DATE))) %>%
     mutate(temp_cat = temp_list_names[i])
   temps_df <- rbind(temps_df, df)
 }
+}
 temps_df
 ```
 
 
 ```{r}
-temps_df <- temps_df %>%
+temps_df <- rides_df %>%
+  inner_join(temp_days, by = c("date" = "DATE")) %>%
   group_by(ride_name, temp_cat) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
 ```
