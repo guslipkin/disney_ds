@@ -5,7 +5,6 @@ output: html_notebook
 
 ```{r}
 library(tidyverse)
-library(reshape2)
 library(lubridate)
 library(forcats)
 ```
@@ -13,8 +12,8 @@ library(forcats)
 
 ```{r}
 wdw_metadata %>%
-  mutate(year = year(as.POSIXct(ymd(DATE) + 1)), month = month(as.POSIXct(ymd(DATE) + 1)), day = weekdays(as.POSIXct(ymd(DATE) + 1)),
-         monthweek = ceiling(day(ymd(DATE)) / 7)) %>%
+  mutate(year = year(as.POSIXct(mdy(DATE) + 1)), month = month(as.POSIXct(mdy(DATE) + 1)), day = weekdays(as.POSIXct(mdy(DATE) + 1)),
+         monthweek = ceiling(day(mdy(DATE)) / 7)) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_rain = mean(WEATHER_WDWPRECIP, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = day, fill = mean_rain)) +
