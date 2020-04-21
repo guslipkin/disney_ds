@@ -79,22 +79,6 @@ rides_df %>%
 ```
 
 
-# Largest average wait times = busiest day of week -- Histogram of wait times highlight parade times
-```{r, eval=FALSE}
-for (i in 1:14) {
-  chart <- rides[[i]] %>%
-    mutate(weekday = weekdays(datetime)) %>%
-    group_by(weekday) %>%
-    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-    ggplot(aes(x = ordered(weekday, levels = days_of_week), y = mean_wait)) +
-    geom_col() +
-    coord_cartesian(ylim = c(0, 150)) +
-    labs(title = names(rides[i]))
-  print(chart)
-}
-```
-
-
 ```{r}
 rides_df %>%
   mutate(weekday = weekdays(datetime)) %>%
