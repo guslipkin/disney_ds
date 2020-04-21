@@ -40,23 +40,30 @@ wdw_metadata$SEASON <- ifelse(wdw_metadata$SEASON == "MARTIN LUTHER KING JUNIOR 
 ```{r}
 xhot_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP >= 85)
+  filter(WDWMEANTEMP >= 85) %>%
+  mutate(temp_cat = "xhot_days")
 
 hot_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP < 85 & WDWMEANTEMP >= 79.8)
+  filter(WDWMEANTEMP < 85 & WDWMEANTEMP >= 79.8) %>%
+  mutate(temp_cat = "hot_days")
 
 normal_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP >= 71.3 & WDWMEANTEMP < 79.8)
+  filter(WDWMEANTEMP >= 71.3 & WDWMEANTEMP < 79.8) %>%
+  mutate(temp_cat = "normal_days")
 
 cool_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP >= 62.8 & WDWMEANTEMP < 71.3)
+  filter(WDWMEANTEMP >= 62.8 & WDWMEANTEMP < 71.3) %>%
+  mutate(temp_cat = "cool_days")
 
 xcool_days <- wdw_metadata %>%
   select(DATE, WDWMEANTEMP) %>%
-  filter(WDWMEANTEMP < 62.8)
+  filter(WDWMEANTEMP < 62.8) %>%
+  mutate(temp_cat = "xcool_days")
+
+temp_days <- bind_rows(xhot_days, hot_days, normal_days, cool_days, xcool_days)
 ```
 
 
@@ -148,32 +155,9 @@ for (i in 2:14) {
 ```
 
 
-```{r, eval=FALSE}
-rides_df %>%
-    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
-    group_by(ride_name) %>%
-    summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>%
-    mutate(temp_cat = temp_list_names[1])
-```
-
-
 ```{r}
-temp_list <- list(xhot_days, hot_days, normal_days, cool_days, xcool_days)
-
 temps_df <- rides_df %>%
-    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[1]]$DATE))) %>%
-    mutate(temp_cat = temp_list_names[1])
-for (i in 2:5) {
-  df <- rides_df %>%
-    filter(mdy(as_date(mdy(date))) %in% mdy(as_date(temp_list[[i]]$DATE))) %>%
-    mutate(temp_cat = temp_list_names[i])
-  temps_df <- rbind(temps_df, df)
-}
-```
-
-
-```{r}
-temps_df <- temps_df %>%
+  inner_join(temp_days, by = c("date" = "DATE")) %>%
   group_by(ride_name, temp_cat) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE))
 ```
@@ -264,6 +248,7 @@ rides_df %>%
   ylab("Portion of total wait time")
 ```
 
+
 ```{r}
 wdw_metadata_2019 <- wdw_metadata %>%
   filter(year(as.Date(mdy(DATE))) == 2019)
@@ -340,8 +325,7 @@ temp_illustration <- data.frame(bucket = c("x < 62.8", "62.8 <= x < 71.3", "71.3
                                 name = c("xcool_days", "cool_days", "normal_days", "hot_days", "xhot_days"),
                                 start = c("32-01-01", "62-09-18", "71-03-18", "79-09-18", "85-01-01"),
                                 end = c("62-09-18", "71-03-18", "79-09-18", "85-01-01", "100-01-01"),
-                                color = c("cyan", "blue", "yellow", "orange", "red"),
-                                optimize_y = TRUE)
+                                color = c("cyan", "blue", "yellow", "orange", "red"))
 
 vistime(temp_illustration, groups = "name", events = "bucket", title = "Temperature buckets")
 ```
@@ -483,8 +467,8 @@ rides_df %>%
 
 ```{r}
 wdw_metadata %>%
-  mutate(year = year(as.POSIXct(ymd(DATE) + 1)), month = month(as.POSIXct(ymd(DATE) + 1)), day = weekdays(as.POSIXct(ymd(DATE) + 1)),
-         monthweek = ceiling(day(ymd(DATE)) / 7)) %>%
+  mutate(year = year(as.POSIXct(mdy(DATE) + 1)), month = month(as.POSIXct(mdy(DATE) + 1)), day = weekdays(as.POSIXct(mdy(DATE) + 1)),
+         monthweek = ceiling(day(mdy(DATE)) / 7)) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_rain = mean(WEATHER_WDWPRECIP, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = day, fill = mean_rain)) +
