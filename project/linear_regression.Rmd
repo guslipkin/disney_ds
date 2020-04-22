@@ -1,0 +1,42 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+library(lubridate)
+```
+
+```{r}
+rides[[13]] %>% filter(date == "01/01/2013")
+rides[[13]] %>%
+  group_by(date, hour(hms(time)), minute(hms(time))) %>%
+  summarise(mean_estimated = mean(SPOSTMIN, na.rm = TRUE), 
+            mean_actual = mean(SACTMIN, na.rm = TRUE)) %>%
+  filter(!is.na(mean_estimated) & !is.na(mean_actual)) %>%
+  subset(!duplicated(mean_estimated))
+```
+
+```{r}
+splash_regression <- rides[[13]] %>%
+  group_by(date, hour(hms(time)), minute(hms(time))) %>%
+  summarise(mean_estimated = mean(SPOSTMIN, na.rm = TRUE), 
+            mean_actual = mean(SACTMIN, na.rm = TRUE)) %>%
+  filter(!is.na(mean_estimated) & !is.na(mean_actual)) %>%
+  subset(!duplicated(mean_estimated))
+
+splash_regression %>%
+  ggplot(aes(x = mean_estimated, y = mean_actual)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  coord_cartesian(xlim = c(0, 150), ylim = c(0, 150)) +
+  labs(title = "Linear regression of mean estimated ~ mean actual wait time for Splash Mountain",
+       subtitle = "where wait times were recorded in the same minute",
+       x = "Unique mean estimated wait times (minutes)",
+       y = "Mean actual wait times (minutes)")
+```
+
+```{r}
+summary(lm(mean_estimated ~ mean_actual, data = splash_regression))
+```
+
