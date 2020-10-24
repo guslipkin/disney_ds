@@ -11,8 +11,3 @@ Team members:
 - Student 3 [Alex Pierstorff](mailto:apierstorff6867@floridapoly.edu)
 
 - Student 4 [Marli](mailto:hskoglund7612@floridapoly.edu)
-
-
-Our project investigates the main characteristics of popular movies in recent years.
-We will be using the data available at: 
-<https://github.com/reisanar/datasets/blob/master/IMDB_movies.csv> 
