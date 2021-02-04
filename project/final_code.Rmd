@@ -295,7 +295,7 @@ wdw_metadata %>%
 ```{r}
 rides_df %>%
   mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
-         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+         monthweek = ifelse(wday(mdy(date), week_start = 1) < wday(floor_date(mdy(date), "month"), week_start = 1), ceiling(day((mdy(date))) / 7) + 1, ceiling(day((mdy(date))) / 7))) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
@@ -309,7 +309,7 @@ rides_df %>%
 ```{r}
 rides_df %>%
   mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = wday(as.POSIXct(mdy(date) + 1)),
-         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+         monthweek = ifelse(wday(mdy(date), week_start = 1) < wday(floor_date(mdy(date), "month"), week_start = 1), ceiling(day((mdy(date))) / 7) + 1, ceiling(day((mdy(date))) / 7))) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = ordered(day, levels = days_of_week), fill = mean_wait)) +
@@ -468,7 +468,7 @@ rides_df %>%
 ```{r}
 wdw_metadata %>%
   mutate(year = year(as.POSIXct(mdy(DATE) + 1)), month = month(as.POSIXct(mdy(DATE) + 1)), day = weekdays(as.POSIXct(mdy(DATE) + 1)),
-         monthweek = ceiling(day(mdy(DATE)) / 7)) %>%
+         monthweek = ifelse(wday(mdy(DATE), week_start = 1) < wday(floor_date(mdy(DATE), "month"), week_start = 1), ceiling(day((mdy(DATE))) / 7) + 1, ceiling(day((mdy(DATE))) / 7))) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_rain = mean(WEATHER_WDWPRECIP, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = day, fill = mean_rain)) +
