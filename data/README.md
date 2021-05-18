@@ -1,10 +1,2 @@
-# Data Description: IMDB popular movies data
-
-We use the `IMDB_movies.csv` dataset available at 
+# We used data from here:
 <https://touringplans.com/walt-disney-world/crowd-calendar#DataSets>
-
-This dataset includes information of popular movies on IMDB in the last 10 years. 
-
-The data fields included are: Title, Genre, Description, Director, Actors, Year, Runtime, Rating, Votes, Revenue, Metascore (score of the movie on the metacritic website)
-
-Below we include some basic statistics for this datasets, including dimensions and range of years:
