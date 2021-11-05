@@ -3,7 +3,6 @@ title: "Final Report for Intro to Data Science"
 author: "Hailey Skoglund, Gus Lipkin, Alex Pierstorff, and Marli"
 output:
   pdf_document: default
-  html_notebook: default
   html_document:
     df_print: paged
 ---
@@ -315,7 +314,9 @@ Many months are shown to have five weeks here. This is because across all years 
 ```{r, results='hide'}
 rides_df %>%
   mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = weekdays(as.POSIXct(mdy(date) + 1)),
-         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+         monthweek = ifelse(wday(mdy(date), week_start = 1) < wday(floor_date(mdy(date), "month"), week_start = 1),
+                            ceiling(day((mdy(date))) / 7) + 1, 
+                            ceiling(day((mdy(date))) / 7))) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = ordered(day, levels = rev(days_of_week)), fill = mean_wait)) +
@@ -330,7 +331,9 @@ rides_df %>%
 ```{r, results='hide'}
 rides_df %>%
   mutate(year = year(as.POSIXct(mdy(date) + 1)), month = month(as.POSIXct(mdy(date) + 1)), day = wday(as.POSIXct(mdy(date) + 1)),
-         monthweek = ceiling(day(mdy(date)) / 7)) %>%
+         monthweek = ifelse(wday(mdy(date), week_start = 1) < wday(floor_date(mdy(date), "month"), week_start = 1), 
+                            ceiling(day((mdy(date))) / 7) + 1, 
+                            ceiling(day((mdy(date))) / 7))) %>%
   group_by(month, day, monthweek) %>%
   summarise(mean_wait = mean(SPOSTMIN, na.rm = TRUE)) %>% 
   ggplot(aes(x = monthweek, y = ordered(day, levels = days_of_week), fill = mean_wait)) +
@@ -346,7 +349,7 @@ rides_df %>%
 Hot_weather.rmd explored the relationship between average temperature levels in the Disney parks and ride wait times. From this data, we constructed several data visualizations that displayed the temperatures that were reported on each week of the month over a specified time period. Every Floridian knows how scorching the temperatures can get in the heat of the summer, so we decided to analyze how this affected the wait times specifically in indoor rides or rides with a splash or water aspect. Our analysis revealed several intriguing observations. First, we made a temperature classification system based on the average temperature peaks and troughs which gave us five distinct categories: very cold (xcool_days), cool (cool_days), comfortable (normal_days), warm (hot_days), and very hot (xhot_days). From this, we constructed an interactive graph that categorized each of the temperatures into categories based on their temperatures. We then created a visualization displaying the average estimated wait time for each ride at a given temperature. This interesting analysis revealed that guests prefer to ride indoor rides on cooler days and splash-aspect on hotter days. This may be because guests seek shelter from these varying harsh outdoor conditions. 
 
 
-```{r}
+```{r, eval=FALSE}
 #Create a chart showing the temperature buckets
 temp_illustration <- data.frame(bucket = c("x < 62.8", "62.8 <= x < 71.3", "71.3 <= x < 79.8", "79.8 >= x > 85", "x >= 85"),
                                 name = c("xcool_days", "cool_days", "normal_days", "hot_days", "xhot_days"),
@@ -358,6 +361,8 @@ temp_illustration <- data.frame(bucket = c("x < 62.8", "62.8 <= x < 71.3", "71.3
 
 vistime(temp_illustration, groups = "name", events = "bucket", title = "Temperature buckets")
 ```
+
+![Temperature Buckets](plotly_graph.png)
 
 
 ```{r}
